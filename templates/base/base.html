@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SimpleBloc{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='forms.css') }}">
+</head>
+<body>
+    <header>
+        <div class="wide-content-container">
+            <div class="logo">SimpleBloc</div>
+    
+            {% block nav required %}
+            {% endblock %}
+        </div>
+    </header>
+    
+    <main>
+        
+        {% block main required %}
+        {% endblock %}
+
+    </main>
+
+    <footer>
+        {% block footer %}
+        <div class="wide-content-container">
+            <p>Footer here</p>
+        </div>
+        {% endblock %}
+    </footer>
+</body>
+</html>

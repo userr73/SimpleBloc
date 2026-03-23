@@ -1,0 +1,11 @@
+{% extends 'base/base.html' %}
+
+{% block nav %}
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('timetable') }}">Timetable</a>
+        <a href="{{ url_for('add_event_form') }}">New Event</a>
+        <a href="{{ url_for('view_profile') }}">Profile</a>
+        <a href="{{ url_for('confirm_logout') }}">Logout</a>
+    </nav>
+{% endblock %}

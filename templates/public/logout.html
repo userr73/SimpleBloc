@@ -1,0 +1,10 @@
+{% extends 'base/public_base.html' %}
+
+{% block title %}Logout Successful{% endblock %}
+
+{% block main %}
+    <div class="narrow-content-container">
+        <h1>You have successfully logged out of SimpleBloc</h1>
+        <p>Login again <a href="{{ url_for('login_form') }}">here</a></p>
+    </div>
+{% endblock %}

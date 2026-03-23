@@ -1,0 +1,73 @@
+:root {
+    --primary-font-color: rgb(12, 12, 112);
+}
+
+body {
+    /* Body should take up whole screen height */
+    min-height: 100vh;
+
+    /* Allocate all free space to main */
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+
+    /* General primary font colour */
+    color: var(--primary-font-color);
+}
+
+a {
+    color: var(--primary-font-color);
+}
+
+/* Narrower content container for most information */
+.narrow-content-container {
+    background-color: beige;
+    max-width: 80ch;
+    padding: 2rem;
+    margin: 0 auto;
+}
+
+/* Wider containter for dashboard and timetable design */
+.wide-content-container {
+    padding: 2rem 1rem;
+    background-color: antiquewhite;
+    
+    @media (width > 999px) {
+        padding: 2rem;
+    }
+}
+
+header {    
+    .wide-content-container {
+        background-color: rgb(195, 226, 236);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .logo {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+    
+    nav {
+        display: flex;
+        gap: 2rem;
+    }
+}
+
+main {
+    background-color: rgb(236, 236, 236);
+}
+
+footer {
+    .wide-content-container {
+        background-color: rgb(195, 226, 236);
+
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}
+
