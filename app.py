@@ -18,14 +18,29 @@ def register_form():
 
 @app.get('/dashboard')
 def dashboard():
-    return render_template('app/dashboard.html')
+    # events = [
+    #     {'time': 'idk what format', 'event_details': 'Going to school'},
+    #     {'time': 'still dunno', 'event_details': 'Going HOME'}
+    # ]
+
+    events = []
+
+    num_events = 2
+
+    quick_note = 'Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design andign and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form '
+
+    return render_template('app/dashboard.html', events=events, count=num_events, quick_note=quick_note)
+
+@app.get('/edit-quick-note')
+def quick_note_form():
+    return render_template('app/quick-note.html')
 
 @app.get('/view-timetable')
 def timetable():
     return render_template('app/timetable.html')
 
 @app.get('/add-event')
-def add_event_form():
+def new_event_form():
     return render_template('app/event-form.html')
 
 @app.get('/profile')

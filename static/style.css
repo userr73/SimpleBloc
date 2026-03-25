@@ -1,5 +1,8 @@
 :root {
-    --primary-font-color: rgb(12, 12, 112);
+    --primary-font-colour: rgb(12, 12, 112);
+    --primary-colour: rgb(190, 190, 190);
+    --secondary-colour: rgb(207, 207, 207);
+    --tertiary-colour: rgb(221, 221, 221);
 }
 
 body {
@@ -11,17 +14,22 @@ body {
     grid-template-rows: auto 1fr auto;
 
     /* General primary font colour */
-    color: var(--primary-font-color);
+    color: var(--primary-font-colour);
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin-bottom: 0.5rem;
 }
 
 a {
-    color: var(--primary-font-color);
+    color: var(--primary-font-colour);
 }
 
 /* Narrower content container for most information */
 .narrow-content-container {
-    background-color: beige;
     max-width: 80ch;
+    
+    min-height: 100%;
     padding: 2rem;
     margin: 0 auto;
 }
@@ -29,7 +37,7 @@ a {
 /* Wider containter for dashboard and timetable design */
 .wide-content-container {
     padding: 2rem 1rem;
-    background-color: antiquewhite;
+    min-height: 100%;
     
     @media (width > 999px) {
         padding: 2rem;
@@ -59,9 +67,147 @@ header {
 }
 
 main {
-    background-color: rgb(236, 236, 236);
+    background-color: rgb(225, 234, 242);
 }
 
+.title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* Dashboard container */
+.dashboard-container {
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+/* Dashboard design */
+.dashboard {
+    display: grid;
+    gap: 2rem;
+    /* Make side links and quick note a fixed size */
+    /* Daily table takes up remaining space */
+    grid-template-columns: auto 32ch;
+}
+
+/* Daily timetable container */
+.daily-table {
+    background-color: var(--primary-colour);
+    padding: 1rem;
+    border-radius: 0.75rem;
+
+    p {
+        text-align: center;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Table design */
+table {
+    width: 100%;
+}
+
+table, th, td {
+    border: 3px solid var(--primary-colour);
+    border-collapse: collapse;
+    border-radius: 0.6rem;
+}
+
+th, td {
+    padding: 0.25rem 0.5rem;
+}
+
+th {
+    background-color: var(--secondary-colour);
+    text-align: left;
+}
+
+td {
+    background-color: var(--tertiary-colour);
+}
+
+/* Quick navigation and quick note next to table */
+.quick-selections {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    max-height: 100%;
+
+    gap: 1.5rem;
+
+    /* Two links for quick navigation */
+    .quick-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    /* Quick navigation button design */
+    a {
+        text-decoration: none;
+        background-color: var(--tertiary-colour);
+        
+        padding: 0.75rem;
+        border-radius: 0.75rem;
+
+        div {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+
+
+            i {
+                padding: 0.5rem 0.625rem;
+                background-color: var(--secondary-colour);
+                border-radius: 100rem;
+                font-size: 2rem;
+            }
+    
+            p {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    /* Quick note container */
+    .quick-note {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 0.5rem;
+        padding: 1rem;
+        border-radius: 0.75rem;
+
+        background-color: var(--tertiary-colour);
+        max-height: 16rem;
+
+        div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            
+            .title {
+                margin: 0;
+            }
+            
+            a {
+                background-color: var(--secondary-colour);
+                padding: 0.29rem 0.4rem;
+                border-radius: 0.5rem;
+            }
+
+            i {
+                font-size: 1.5rem;
+            }
+        }
+
+        p {
+            overflow: auto;
+        }
+    }
+}
+
+/* Footer */
 footer {
     .wide-content-container {
         background-color: rgb(195, 226, 236);

@@ -3,8 +3,56 @@
 {% block title %}SimpleBloc Dashboard{% endblock %}
 
 {% block main %}
-    <div class="wide-content-container">
+    <div class="wide-content-container dashboard-container">
         <h1>Today's Events</h1>
-        <p>Table here</p>
+        <div class="dashboard">
+            <div class="daily-table">
+                {% if events %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Event</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in events %}
+                                <tr>
+                                    <td>{{ event.time }}</td>
+                                    <td>{{ event.event_details }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p>Number of events today: {{ count }}</p>
+                {% else %}
+                    <p>No events today – <a href="{{ url_for('new_event_form') }}">add some events</a></p>
+                {% endif %}
+            </div>
+
+            <div class="quick-selections">
+                <div class="quick-links">
+                    <a href="{{ url_for('timetable') }}">
+                        <div>
+                            <i class="fa-solid fa-arrow-right"></i>
+                            <p>View full timetable</p>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('new_event_form') }}">
+                        <div>
+                            <i class="fa-solid fa-plus"></i>
+                            <p>Add new event</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="quick-note">
+                    <div>
+                        <p class="title">Quick Note</p>
+                        <a href="{{ url_for('quick_note_form') }}"><i class="fa-regular fa-pen-to-square"></i></a>
+                    </div>
+                    <p>{{ quick_note }}</p>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
