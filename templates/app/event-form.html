@@ -1,3 +1,12 @@
+<!-- {# Create an empty errors dictionary if one does not exist #}
+{% if errors is not defined %}
+    {% set errors = {} %}
+{% endif %}
+
+{% if data is not defined %}
+    {% set data = {} %}
+{% endif %} -->
+
 {% extends 'base/app_base.html' %}
 
 {% block title %}Add a New Event{% endblock %}
@@ -6,5 +15,70 @@
     <div class="narrow-content-container">
         <h1>Add New Event</h1>
         <p>View and edit your timetable below</p>
+
+        <form action="{{ url_for('submit_new_event') }}" method="post">
+            <div class="title">Date and time</div>
+
+            <div class="form-group">
+                <label for="event_date">Date</label>
+                <input type="date" name="event_date" id="event_date" value="{{ data.get('event_date', '') }}">
+                <!-- <div class="form-group-error">{{ errors.get('event_date', '') }}</div> -->
+            </div>
+            
+            <div class="two-equal-cols">
+                <div class="form-group">
+                    <label for="start_time">Start time</label>
+                    <input type="time" name="start_time" id="start_time" value="{{ data.get('start_time', '') }}">
+                    <!-- <div class="form-group-error">{{ errors.get('start_time', '') }}</div> -->
+                    <div>
+                        <input type="checkbox" name="is_all_day_event" id="is_all_day_event" value="is_all_day_event">
+                        <label for="is_all_day_event">All day event</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="end_time">End time</label>
+                    <input type="time" name="end_time" id="end_time" value="{{ data.get('end_time', '') }}">
+                    <!-- <div class="form-group-error">{{ errors.get('end_time', '') }}</div> -->
+                </div>
+            </div>
+            
+            <div class="title">Event details</div>
+            
+            <div class="form-group">
+                <label for="event_title">Title</label>
+                <input type="text" name="event_title" id="event_title" value="{{ data.get('event_title', '') }}">
+                <small>Max 50 characters</small>
+                <!-- <div class="form-group-error">{{ errors.get('event_title', '') }}</div> -->
+            </div>
+            
+            <div class="form-group">
+                <label for="event_description">Description</label>
+                <textarea name="event_description" id="event_description">{{ data.get('event_description', '') }}</textarea>
+                <!-- <div class="form-group-error">{{ errors.get('event_description', '') }}</div> -->
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category</label>
+                <input list="categories-list" id="category" name="category" />
+
+                <datalist id="categories-list">
+                    <option value="No category"></option>
+                    <option value="School"></option>
+                    <option value="Sport"></option>
+                    <option value="Sleep"></option>
+                </datalist>
+
+                <a href="#"><small class="trigger-categories" onclick="document.getElementById('categories-dialog').showModal(); return false" hx-get="/edit-categories" hx-target="#categories-dialog-content">Edit categories</small></a>
+                <dialog id="categories-dialog">
+                    <button type="button" onclick="document.getElementById('categories-dialog').close()" id="close-categories-dialog"><i class="fa-solid fa-xmark"></i></button>
+                    <div id="categories-dialog-content"></div>
+                </dialog>
+                <!-- <div class="form-group-error">{{ errors.get('category', '') }}</div> -->
+            </div>
+
+
+            <button type="submit">Add event</button>
+        </form>
     </div>
 {% endblock %}

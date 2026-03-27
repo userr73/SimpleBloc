@@ -1,0 +1,89 @@
+:root {
+    --primary-font-colour: rgb(12, 12, 112);
+    --primary-colour: rgb(190, 190, 190);
+    --secondary-colour: rgb(207, 207, 207);
+    --tertiary-colour: rgb(226, 226, 226);
+    --outline-colour: rgb(138, 138, 138);
+    --hover-colour: rgb(169, 169, 169);
+}
+
+form {
+    background-color: var(--tertiary-colour);
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+
+    .title {
+        margin-top: 1rem;
+    }
+
+    .title:first-of-type {
+        margin-top: 0.25rem;
+    }
+
+    .form-group {
+        display: grid;
+        gap: 0.25rem;
+
+        margin: 0.5rem 0 1.25rem 0;
+    }
+
+    .two-equal-cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+        gap: 1rem;
+    }
+
+    /* Individual form elements */
+    input, textarea, select {
+        padding: 0.25rem;
+        border: 1px var(--outline-colour) solid;
+        border-radius: 4px;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: var(--primary-font-colour);
+    }
+
+    textarea {
+        height: 10rem;
+        resize: vertical;
+    }
+
+    select {
+        padding: 0.4rem 0.25rem;
+    }
+
+    dialog {
+        outline: none;
+        border: none;
+        border-radius: 4px;
+        
+        margin: auto auto;
+    }
+
+    button {
+        padding: 0.75rem 1.25rem;
+        background-color: var(--primary-colour);
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        
+        border: none;
+        border-radius: 4px;
+    }
+
+    button:hover {
+        background-color: var(--hover-colour);
+    }
+
+
+    /* Other form elements */
+    .trigger-categories {
+        text-decoration: underline;
+    }
+    
+    .trigger-categories:hover {
+        text-decoration: none;
+    }
+}

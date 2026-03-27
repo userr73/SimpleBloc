@@ -2,7 +2,7 @@
     --primary-font-colour: rgb(12, 12, 112);
     --primary-colour: rgb(190, 190, 190);
     --secondary-colour: rgb(207, 207, 207);
-    --tertiary-colour: rgb(221, 221, 221);
+    --tertiary-colour: rgb(226, 226, 226);
 }
 
 body {
@@ -23,6 +23,10 @@ h1, h2, h3, h4, h5, h6, p {
 
 a {
     color: var(--primary-font-colour);
+}
+
+a:hover {
+    text-decoration: none;
 }
 
 /* Narrower content container for most information */
@@ -71,7 +75,7 @@ main {
 }
 
 .title {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 600;
 }
 
@@ -94,12 +98,12 @@ main {
 .daily-table {
     background-color: var(--primary-colour);
     padding: 1rem;
-    border-radius: 0.75rem;
+    border-radius: 12px;
 
     p {
         text-align: center;
         margin-top: 0.5rem;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
 }
 
@@ -111,7 +115,7 @@ table {
 table, th, td {
     border: 3px solid var(--primary-colour);
     border-collapse: collapse;
-    border-radius: 0.6rem;
+    border-radius: 10px;
 }
 
 th, td {
@@ -148,7 +152,7 @@ td {
         background-color: var(--tertiary-colour);
         
         padding: 0.75rem;
-        border-radius: 0.75rem;
+        border-radius: 12px;
 
         div {
             display: grid;
@@ -176,7 +180,7 @@ td {
         grid-template-rows: auto 1fr;
         gap: 0.5rem;
         padding: 1rem;
-        border-radius: 0.75rem;
+        border-radius: 12px;
 
         background-color: var(--tertiary-colour);
         max-height: 16rem;
@@ -193,7 +197,7 @@ td {
             a {
                 background-color: var(--secondary-colour);
                 padding: 0.29rem 0.4rem;
-                border-radius: 0.5rem;
+                border-radius: 8px;
             }
 
             i {

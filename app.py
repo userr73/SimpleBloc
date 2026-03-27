@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -18,12 +18,12 @@ def register_form():
 
 @app.get('/dashboard')
 def dashboard():
-    # events = [
-    #     {'time': 'idk what format', 'event_details': 'Going to school'},
-    #     {'time': 'still dunno', 'event_details': 'Going HOME'}
-    # ]
+    events = [
+        {'time': 'idk what format', 'event_details': 'Going to school'},
+        {'time': 'still dunno', 'event_details': 'Going HOME'}
+    ]
 
-    events = []
+    # events = []
 
     num_events = 2
 
@@ -43,6 +43,27 @@ def timetable():
 def new_event_form():
     return render_template('app/event-form.html')
 
+@app.post('/submit-new-event')
+def submit_new_event():
+    # TODO: FILL THIS IN!
+    data = {
+        'event_date': request.form.get('event_date'),
+        'start_time': request.form.get('start_time'),
+        'end_time': request.form.get('end_time'),
+        'is_all_day_event': 'is_all_day_event' in request.form,
+        'event_title': request.form.get('event_title'),
+        'event_description': request.form.get('event_description'),
+        'category': request.form.get('category'),
+    }
+
+    return render_template('app/temp-form-submit.html')
+
+@app.get('/edit-categories')
+def edit_categories():
+    categories = ['school', 'sport', 'sleep']
+    
+    return render_template('app/categories.html', categories=categories)
+
 @app.get('/profile')
 def view_profile():
     return render_template('app/profile.html')
@@ -51,4 +72,4 @@ def view_profile():
 def confirm_logout():
     return render_template('public/logout.html')
 
-app.run(debug=True)
+app.run(debug=True, port=5001)
