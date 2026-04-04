@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from utils.validators import validate_event
 
 app = Flask(__name__)
 
@@ -45,18 +46,25 @@ def new_event_form():
 
 @app.post('/submit-new-event')
 def submit_new_event():
-    # TODO: FILL THIS IN!
-    data = {
+    # Dictionary for form data - used to repopulate the form
+    form_data = {
         'event_date': request.form.get('event_date'),
         'start_time': request.form.get('start_time'),
-        'end_time': request.form.get('end_time'),
         'is_all_day_event': 'is_all_day_event' in request.form,
-        'event_title': request.form.get('event_title'),
-        'event_description': request.form.get('event_description'),
-        'category': request.form.get('category'),
+        'end_time': request.form.get('end_time'),
+        'event_title': request.form.get('event_title', '').strip(),
+        'event_description': request.form.get('event_description', '').strip(),
+        'category': request.form.get('category', '').strip()
     }
 
-    return render_template('app/temp-form-submit.html')
+    # Validate the event submission for any errors
+    errors = validate_event(form_data)
+
+    if errors:
+        return render_template('app/event-form.html', errors=errors, data=form_data)
+
+    # If no errors, use temp submission form
+    return render_template('app/temp-form-submit.html', data=form_data)
 
 @app.get('/edit-categories')
 def edit_categories():
@@ -72,4 +80,4 @@ def view_profile():
 def confirm_logout():
     return render_template('public/logout.html')
 
-app.run(debug=True, port=5001)
+app.run(debug=True, port=5003)

@@ -34,6 +34,14 @@ form {
         gap: 1rem;
     }
 
+    .form-group-error {
+        color: darkred;
+    }
+
+    .form-group-error:empty {
+        display: none;
+    }
+
     /* Individual form elements */
     input, textarea, select {
         padding: 0.25rem;
