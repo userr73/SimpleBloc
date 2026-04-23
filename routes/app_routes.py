@@ -1,22 +1,9 @@
 from flask import Flask, render_template, request
+
 from utils.validators import validate_event, validate_date
 from utils.events import select_week_dates
 
-app = Flask(__name__)
-
-@app.get('/')
-def home():
-    return render_template('public/home.html')
-
-
-@app.get('/login')
-def login_form():
-    return render_template('public/login.html')
-
-
-@app.get('/register')
-def register_form():
-    return render_template('public/register.html')
+from application import app
 
 
 @app.get('/dashboard')
@@ -97,9 +84,4 @@ def view_profile():
     return render_template('app/profile.html')
 
 
-@app.get('/logout')
-def confirm_logout():
-    return render_template('public/logout.html')
 
-
-app.run(debug=True, port=5003)
