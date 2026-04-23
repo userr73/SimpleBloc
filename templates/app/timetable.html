@@ -6,5 +6,13 @@
     <div class="wide-content-container">
         <h1>Timetable</h1>
         <p>View and edit your timetable below</p>
+        <input type="date" name='date_selected' value="{{ date_selected }}" onchange="window.location.reload()">
+        <p>start date {{ start_date }}</p>
+        <p>end date {{ end_date }}</p>
+        <p>date selected {{ date_selected }}</p>
+
+        <div class="main-timetable-grid">
+
+        </div>
     </div>
 {% endblock %}

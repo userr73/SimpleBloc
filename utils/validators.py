@@ -1,5 +1,16 @@
 from datetime import date, time
 
+def validate_date(date_input):
+    """Validates the date input from the date selector in the timetable and returns a valid date object"""
+    try:
+        # Try to create a Python date object to verify it is a valid date
+        valid_date = date.fromisoformat(date_input)
+    except (ValueError, TypeError):
+        valid_date = date.today()
+    
+    return valid_date
+
+
 def validate_event(data):
     """Validates the event form to add or edit an event"""
 

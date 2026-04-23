@@ -1,5 +1,7 @@
 -- Delete all tables if they exist
 DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Categories;
+DROP TABLE IF EXISTS Events;
 
 -- User details
 CREATE TABLE Users (
