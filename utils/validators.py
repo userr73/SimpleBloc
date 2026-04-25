@@ -1,5 +1,43 @@
 from datetime import date, time
 
+def validate_login(data):
+    """Validates the login form for an existing user"""
+
+    # Dictionary for form errors
+    errors = {}
+
+    # Email is mandatory and must be in a valid format
+    if '@' not in data['email'] or len(data['email']) < 3:
+        errors['email'] = 'Enter a valid email address'
+
+    # Password is mandatory
+    if not data['password']:
+        errors['password'] = 'Enter your password'
+
+    return errors
+
+
+def validate_registration(data):
+    """Validates the registration form"""
+
+    # Dictionary for form errors
+    errors = {}
+
+    # Email is mandatory and must be a valid email format
+    if '@' not in data['email'] or len(data['email']) < 3:
+        errors['email'] = 'Enter a valid email address'
+
+    # Password is mandatory and must be at least 8 characters long
+    if len(data['password']) < 8:
+        errors['password'] = 'Password must be at least 8 characters long'
+
+    # Password confirmation must match password
+    if data['password'] != data['confirm_password']:
+        errors['confirm_password'] = 'Passwords do not match'
+    
+    return errors
+    
+
 def validate_date(date_input):
     """Validates the date input from the date selector in the timetable and returns a valid date object"""
     try:

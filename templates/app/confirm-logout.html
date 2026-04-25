@@ -5,6 +5,10 @@
 {% block main %}
     <div class="narrow-content-container">
         <h1>Are you sure you want to log out?</h1>
-        <p>Click button below or whatever</p>
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit">Logout</button>
+
+            <a href="{{ url_for('dashboard') }}">Cancel</a>
+        </form>
     </div>
 {% endblock %}

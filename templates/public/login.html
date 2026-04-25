@@ -1,3 +1,12 @@
+{# Create an empty errors dictionary if one does not exist #}
+{% if errors is not defined %}
+    {% set errors = {} %}
+{% endif %}
+
+{% if data is not defined %}
+    {% set data = {} %}
+{% endif %}
+
 {% extends 'base/public_base.html' %}
 
 {% block title %}Login to SimpleBloc{% endblock %}
@@ -6,6 +15,25 @@
     <div class="narrow-content-container">
         <h1>Login</h1>
         <p>Enter your login details below.</p>
+
+        {# Show invalid login or successful reigstration message #}
+        {% include "partials/flash-message.html" %}
+
+        <form action="{{ url_for('process_login_form') }}" method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" value="{{ data.get('email', '') }}">
+                <div class="form-group-error">{{ errors.get('email', '') }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" value="{{ data.get('password', '') }}">
+                <div class="form-group-error">{{ errors.get('password', '') }}</div>
+            </div>
+            
+            <button type="submit">Login</button>
+        </form>
 
         <p>Don't have an account? <a href="{{ url_for('register_form') }}">Register here</a></p>
     </div>

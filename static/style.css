@@ -70,6 +70,27 @@ header {
     }
 }
 
+/* Flash messages */
+.message {
+    /* CHANGE/DELETE */
+    border: 1px solid grey;
+    background-color: lightgrey;
+    padding: 1rem;
+    margin: 1rem 0;
+    
+    &.error-message {
+        /* CHANGE/DELETE */
+        border-color: crimson;
+        background-color: lightpink;
+    }
+    
+    &.info-message {
+        /* CHANGE/DELETE */
+        border-color: forestgreen;
+        background-color: lightgreen;
+    }
+}
+
 main {
     background-color: rgb(225, 234, 242);
 }

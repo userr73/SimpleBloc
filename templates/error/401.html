@@ -1,0 +1,11 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Please login{% endblock %}
+
+{% block main %}
+    <div class="narrow-content-container">
+        <p>You need to be logged in to access that page</p>
+        <p><a href="{{ url_for('login_form') }}">Login here</a></p>
+    </div>
+{% endblock %}
+

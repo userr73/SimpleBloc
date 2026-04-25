@@ -3,9 +3,10 @@ WARNING: Running this file deletes any existing data if the database already exi
 """
 
 import sqlite3
+from application import app
 
 # Name of database and location of schema file
-DATABASE_NAME = 'simplebloc.db'
+DATABASE_NAME = app.config['DATABASE_NAME']
 SCHEMA_FILENAME = 'simplebloc-schema.sql'
 
 # Establish a connection to the database

@@ -1,3 +1,12 @@
+{# Create an empty errors dictionary if one does not exist #}
+{% if errors is not defined %}
+    {% set errors = {} %}
+{% endif %}
+
+{% if data is not defined %}
+    {% set data = {} %}
+{% endif %}
+
 {% extends 'base/public_base.html' %}
 
 {% block title %}Register an Account for SimpleBloc{% endblock %}
@@ -6,6 +15,31 @@
     <div class="narrow-content-container">
         <h1>Register</h1>
         <p>Enter your details below for registration</p>
+
+        {# Flash an error message for invalid form #}
+        {% include "partials/flash-message.html" %}
+
+        <form action="{{ url_for('process_register_form') }}" method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" value="{{ data.get('email', '') }}">
+                <div class="form-group-error">{{ errors.get('email', '') }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password">
+                <div class="form-group-error">{{ errors.get('password', '') }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password">Confirm password</label>
+                <input type="password" name="confirm_password" id="password">
+                <div class="form-group-error">{{ errors.get('confirm_password', '') }}</div>
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
 
         <p>Already have an account? <a href="{{ url_for('login_form') }}">Login here</a></p>
     </div>

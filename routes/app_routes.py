@@ -1,13 +1,18 @@
-from flask import Flask, render_template, request
+from flask import render_template, request, session, abort
 
+from application import app
 from utils.validators import validate_event, validate_date
 from utils.events import select_week_dates
 
-from application import app
+def check_login():
+    """Checks if a user id is set in the session"""
+    if 'user_id' not in session:
+        abort(401)
 
 
 @app.get('/dashboard')
 def dashboard():
+    check_login()
     events = [
         {'time': 'idk what format', 'event_details': 'Going to school'},
         {'time': 'still dunno', 'event_details': 'Going HOME'}
@@ -24,11 +29,13 @@ def dashboard():
 
 @app.get('/edit-quick-note')
 def quick_note_form():
+    check_login()
     return render_template('app/quick-note.html')
 
 
 @app.get('/view-timetable')
 def timetable():
+    check_login()
     events = [
         {'time': 'idk what format', 'event_details': 'Going to school'},
         {'time': 'still dunno', 'event_details': 'Going HOME'}
@@ -45,11 +52,13 @@ def timetable():
 
 @app.get('/add-event')
 def new_event_form():
+    check_login()
     return render_template('app/event-form.html')
 
 
 @app.post('/submit-new-event')
 def submit_new_event():
+    check_login()
     # Dictionary for form data - used to repopulate the form
     form_data = {
         'event_date': request.form.get('event_date'),
@@ -74,6 +83,7 @@ def submit_new_event():
 
 @app.get('/edit-categories')
 def edit_categories():
+    check_login()
     categories = ['school', 'sport', 'sleep']
     
     return render_template('app/categories.html', categories=categories)
@@ -81,7 +91,12 @@ def edit_categories():
 
 @app.get('/profile')
 def view_profile():
+    check_login()
     return render_template('app/profile.html')
 
 
+@app.get('/confirm-logout')
+def confirm_logout():
+    check_login()
+    return render_template('app/confirm-logout.html')
 
