@@ -3,6 +3,10 @@
     --primary-colour: rgb(190, 190, 190);
     --secondary-colour: rgb(207, 207, 207);
     --tertiary-colour: rgb(226, 226, 226);
+    --bg-colour: rgb(195, 226, 236);
+
+    --row-height: 0.75rem;
+    --total-rows: 36;
 }
 
 body {
@@ -50,7 +54,7 @@ a:hover {
 
 header {    
     .wide-content-container {
-        background-color: rgb(195, 226, 236);
+        background-color: var(--bg-colour);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -239,6 +243,70 @@ td {
             overflow: auto;
         }
     }
+}
+
+
+/* Weekly timetable */
+.weekly-timetable-container {
+    display: grid;
+    grid-template-columns: [time] auto [mon] 1fr [tue] 1fr [wed] 1fr [thu] 1fr [fri] 1fr [sat] 1fr [sun] 1fr; 
+    grid-template-rows: auto, auto, repeat(calc(var(--total-rows) - 2), var(--row-height));
+
+    background-color: var(--tertiary-colour);
+    gap: 1px;
+    /* border: 1px solid #ccc; */
+}
+
+/* First row - dates */
+.date-grid {
+    grid-row: 1;
+    min-height: 10rem; /* DELETE */
+    padding: 1rem;
+}
+
+/* Second row - all day events */
+.all-day-grid {
+    grid-row: 2;
+    min-height: 10rem; /* DELETE */
+    padding: 1rem;
+}
+
+/* Time labels (left-most side after the first two rows) */
+.time-labels {
+    grid-column: [time];
+}
+
+/* 5-minute blocks */
+.calendar-slot {
+    background-color: white;
+    height: var(--row-height);
+}
+
+
+/* Calendar events */
+.calendar-event {
+    padding: 0.25rem;
+    overflow: hidden; /* Ensures that a really long word does not force the container to stretch its width */
+    overflow-wrap: break-word; /* Breaks the really long word if it goes beyond the container width */
+}
+
+.eventtt {
+    display: block;
+}
+
+
+/* Categories modal */
+.white-bg-btn {
+    background-color: red;
+    padding: 0;
+    margin: 0;
+}
+
+.categories-dialog-content {
+    display: grid;
+
+    height: 15rem;
+    width: 25rem;
 }
 
 /* Footer */

@@ -2,8 +2,9 @@ from flask import render_template, request, session, abort, redirect, url_for
 
 from application import app
 from utils.validators import validate_event, validate_date
-from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_category_id
+from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_category_id, get_this_week_events
 from utils.db import get_db
+from utils.user_profile import get_user_profile
 
 def check_login():
     """Checks if a user id is set in the session"""
@@ -37,18 +38,19 @@ def quick_note_form():
 @app.get('/view-timetable')
 def timetable():
     check_login()
-    events = [
-        {'time': 'idk what format', 'event_details': 'Going to school'},
-        {'time': 'still dunno', 'event_details': 'Going HOME'}
-    ]
+
+    print('DATE THE USER ENTERED', request.form.get('date_selected'))
 
     # Validate the selected date and convert into a date object
-    print(request.form.get('date_selected'))
     date_selected = validate_date(request.form.get('date_selected'))
 
+    # Figure out what the first and last day of the week the selected date is in
     start_date, end_date = select_week_dates(date_selected)
-
-    return render_template('app/timetable.html', date_selected=date_selected.isoformat(), start_date=start_date, end_date=end_date)
+    
+    # Get the user's events for the selected week
+    events = get_this_week_events(session.get('user_id'), start_date, end_date)
+    
+    return render_template('app/timetable.html', date_selected=date_selected, start_date=start_date, end_date=end_date, events=events)
 
 
 @app.get('/add-event')
@@ -152,7 +154,7 @@ def add_event():
 @app.get('/edit-categories')
 def edit_categories():
     check_login()
-    categories = ['school', 'sport', 'sleep']
+    categories = get_all_categories(session.get('user_id'))
     
     return render_template('app/categories.html', categories=categories)
 
@@ -160,7 +162,11 @@ def edit_categories():
 @app.get('/profile')
 def view_profile():
     check_login()
-    return render_template('app/profile.html')
+
+    # Get profile details
+    email_str = get_user_profile(session.get('user_id'))
+
+    return render_template('app/profile.html', email=email_str)
 
 
 @app.get('/confirm-logout')

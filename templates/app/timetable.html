@@ -6,13 +6,43 @@
     <div class="wide-content-container">
         <h1>Timetable</h1>
         <p>View and edit your timetable below</p>
-        <input type="date" name='date_selected' value="{{ date_selected }}" onchange="window.location.reload()">
+        <input type="date" name='date_selected' value="{{ date_selected }}">
         <p>start date {{ start_date }}</p>
         <p>end date {{ end_date }}</p>
         <p>date selected {{ date_selected }}</p>
 
-        <div class="main-timetable-grid">
+        <div class="weekly-timetable-container">
+            <!-- Date row -->
+            <div class="date-grid" style="grid-column: {{ time }};">AEST</div>
+            {% for i in range(2, 9) %}
+                <div class="date-grid" style="grid-column: {{ i }};">date: {{i-1}}</div>
+            {% endfor %}
+            
+            <!-- All day events row -->
+            <div class="all-day-grid" style="grid-column: {{ time }};">All day</div>
+            {% for i in range(2, 9) %}
+                <div class="all-day-grid" style="grid-column: {{ i }};">all day event: {{i}}</div>
+            {% endfor %}
 
+            <!-- Time labels -->
+            {% for i in range(0, 24) %}
+                <div class="time-label" style="grid-row: {{ (12*i)+3 }} / span 12;">{{i}}:00</div>
+            {% endfor %}
+
+            <!-- Main timetable -->
+            {% for day in ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] %}
+                {% for row_num in range(3, 291) %}
+                    <div class="calendar-slot" style="grid-row: {{ row_num }}; grid-column: {{ day }};">
+                    </div>
+                {% endfor %}
+            {% endfor %}    
+
+
+            <!-- Sample Events - the inline styles add colour and place the event in the correct location  -->
+            <div class="calendar-event"
+                style="background-color: lightblue; grid-row: 7 / 13; grid-column: mon;">
+                Some task with lots of text ewhfeiuwhdueiwdhewudedhdwehuidhweudhewiuuwiid
+            </div>
         </div>
     </div>
 {% endblock %}

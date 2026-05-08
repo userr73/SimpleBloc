@@ -1,1 +1,3 @@
-<p>Current categories: {{ categories }}</p>
+{% for category in categories %}
+    <p>{{ category }}</p>
+{% endfor %}

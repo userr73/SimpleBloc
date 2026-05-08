@@ -2,6 +2,26 @@ from datetime import date
 
 from utils.db import get_db, query_all, query_one
 
+def get_this_week_events(user_id, start, end):
+    """Retrieves one week of events based on the given start and end date"""
+    sql = '''
+        SELECT *
+        FROM Events
+        JOIN Categories on Categories.category_id = Events.category_id
+        WHERE Events.user_id = ?
+        AND event_date >= ?
+        AND event_date <= ?
+    '''
+    # NOTE: do I need to order by date ascending?
+
+    data = (user_id, start, end)
+
+    events = query_all(sql, data)
+
+    return events
+
+
+
 def get_category_id(user_id, category_str):
     """Finds the category id of a given category name string"""
     sql = '''
@@ -14,7 +34,8 @@ def get_category_id(user_id, category_str):
 
     category_id = query_one(sql, data)
 
-    return dict(category_id)['category_id']
+    # Return the value of category_id (integer)
+    return category_id['category_id']
 
 
 
@@ -60,5 +81,6 @@ def select_week_dates(selected_date):
     start_date = date.fromisocalendar(year, week_num, 1)
     end_date = date.fromisocalendar(year, week_num, 7)
 
+    # Return the date objects
     return start_date, end_date
 
