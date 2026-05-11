@@ -1,6 +1,76 @@
-from datetime import date
+from datetime import date, timedelta
 
 from utils.db import get_db, query_all, query_one
+
+def get_this_weeks_days(start_date):
+    """Returns the seven dates (day) of the selected week"""
+    dates = {}
+
+    for idx, day in enumerate(['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']):
+        next_day = start_date + timedelta(days=idx)
+        dates[day] = next_day.day
+    
+    return dates
+
+
+
+def time_to_row_num(event_time):
+    """Returns the relevant row number of the given time"""
+    hr, min = event_time.split(':')
+
+    row_num = int(hr) * 12 + int(int(min) // 5) + 3
+
+    return row_num
+
+
+def date_to_col_name(event_date):
+    """Returns the relevant column name based on the day of the week given"""
+    # Convert the date to a date object
+    date_obj = date.fromisoformat(event_date)
+    
+    # Get the day of the week (number)
+    day_num = date_obj.isocalendar()[2]
+    
+    # Match the day number with the relevant column name
+    match day_num:
+        case 1:
+            col_name = 'mon'
+        case 2:
+            col_name = 'tue'
+        case 3:
+            col_name = 'wed'
+        case 4:
+            col_name = 'thu'
+        case 5:
+            col_name = 'fri'
+        case 6:
+            col_name = 'sat'
+        case 7:
+            col_name = 'sun'
+
+    return col_name
+
+
+def get_event_styling(events):
+    """Returns a list of dictionaries containing the column name and row start and end values"""
+    events_style_ls = []
+
+    for event in events:
+        # Get the column name
+        col_name = date_to_col_name(event['event_date'])
+
+        # Get the row start and end numbers
+        row_start = time_to_row_num(event['start_time'])
+        row_end = time_to_row_num(event['end_time'])
+
+        # Add these column and row values to a dictionary
+        event_dict = {'col_name': col_name, 'row_start': row_start, 'row_end': row_end}
+
+        # Add the dictionary as a list item
+        events_style_ls.append(event_dict)
+    
+    return events_style_ls
+
 
 def get_this_week_events(user_id, start, end):
     """Retrieves one week of events based on the given start and end date"""
@@ -68,14 +138,11 @@ def check_if_add_new_category(category_str, user_id):
 
 def select_week_dates(selected_date):
     """Returns the start date and end date of the week based on selected date object"""
-    # Get the week number of the date
-    week_num = selected_date.isocalendar()[1]
+    # Convert the date into an isocalendar date
+    selected_date = selected_date.isocalendar()
 
-    # Checking for the condition when week 53 spans into the next year
-    if week_num == 53 and selected_date.month == 1:
-        year = selected_date.year - 1
-    else:
-        year = selected_date.year
+    year = selected_date[0]
+    week_num = selected_date[1]
     
     # Start date and end date of the week based on selected date
     start_date = date.fromisocalendar(year, week_num, 1)

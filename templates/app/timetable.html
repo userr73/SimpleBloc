@@ -6,16 +6,23 @@
     <div class="wide-content-container">
         <h1>Timetable</h1>
         <p>View and edit your timetable below</p>
-        <input type="date" name='date_selected' value="{{ date_selected }}">
-        <p>start date {{ start_date }}</p>
-        <p>end date {{ end_date }}</p>
-        <p>date selected {{ date_selected }}</p>
+        <form action="{{ url_for('timetable') }}">
+            <input type="date" name='date_selected' value="{{ date_selected }}">
+            <button>Submit</button>
+        </form>
+
+        <p>For debugging purposes</p>
+        <p>{{start_date}}</p>
+        <p>{{end_date}}</p>
 
         <div class="weekly-timetable-container">
             <!-- Date row -->
             <div class="date-grid" style="grid-column: {{ time }};">AEST</div>
-            {% for i in range(2, 9) %}
-                <div class="date-grid" style="grid-column: {{ i }};">date: {{i-1}}</div>
+            {% for key, value in week_dates.items() %}
+                <div class="date-grid" style="grid-column: {{ loop.index + 1 }};">
+                    <div>{{ key }}</div>
+                    <div class="day">{{ value }}</div>
+                </div>
             {% endfor %}
             
             <!-- All day events row -->
@@ -38,11 +45,14 @@
             {% endfor %}    
 
 
-            <!-- Sample Events - the inline styles add colour and place the event in the correct location  -->
-            <div class="calendar-event"
-                style="background-color: lightblue; grid-row: 7 / 13; grid-column: mon;">
-                Some task with lots of text ewhfeiuwhdueiwdhewudedhdwehuidhweudhewiuuwiid
-            </div>
+            <!-- Events -->
+            {% for event in events %}
+                {% set style_dict = event_styles[loop.index0] %}
+                <div class="calendar-event"
+                    style="background-color: lightblue; grid-row: {{ style_dict.row_start }} / {{ style_dict.row_end }}; grid-column: {{ style_dict.col_name }};">
+                    {{ event.event_title }}
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

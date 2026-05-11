@@ -6,7 +6,7 @@
     --bg-colour: rgb(195, 226, 236);
 
     --row-height: 0.75rem;
-    --total-rows: 36;
+    --total-rows: 290;
 }
 
 body {
@@ -259,16 +259,29 @@ td {
 
 /* First row - dates */
 .date-grid {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
     grid-row: 1;
-    min-height: 10rem; /* DELETE */
-    padding: 1rem;
+    padding: 1rem 0;
+
+    .day {
+        align-content: center;
+        font-size: 1.5rem;
+        background-color: var(--bg-colour);
+
+        border-radius: 100rem;
+        height: 3rem;
+        width: 3rem;
+    }
 }
 
 /* Second row - all day events */
 .all-day-grid {
     grid-row: 2;
-    min-height: 10rem; /* DELETE */
-    padding: 1rem;
+    height: 8rem;
 }
 
 /* Time labels (left-most side after the first two rows) */
@@ -288,10 +301,6 @@ td {
     padding: 0.25rem;
     overflow: hidden; /* Ensures that a really long word does not force the container to stretch its width */
     overflow-wrap: break-word; /* Breaks the really long word if it goes beyond the container width */
-}
-
-.eventtt {
-    display: block;
 }
 
 
