@@ -1,5 +1,14 @@
 from datetime import date, time
 
+def validate_category(data):
+    """Validates the category input field"""
+    # Category cannot be empty
+    if not data:
+        return 'Enter a category'
+    
+    return None
+
+
 def validate_login(data):
     """Validates the login form for an existing user"""
 

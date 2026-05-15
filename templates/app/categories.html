@@ -1,3 +1,36 @@
-{% for category in categories %}
-    <p>{{ category }}</p>
-{% endfor %}
+{% extends "base/app_base.html" %}
+
+{% block title %}Your Categories{% endblock %}
+
+{% block main %}
+    <div class="narrow-content-container">
+        <h1>Event Categories</h1>
+
+        {% if categories %}
+            <p>View your categories below</p>
+            <table class="categories-table">
+                <thead>
+                    <tr>
+                        <th>Category Name</th>
+                        <th class="short-col">Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                    <tr>
+                        <td>{{ category.category_name }}</td>
+                        <td>
+                            <div class="edit-delete-options">
+                                <a href="{{ url_for('edit_category', category_id=category.category_id) }}"><i class="fa-regular fa-pen-to-square" title="Rename category"></i></a>
+                                <a href="#"><i class="fa-regular fa-trash-can" title="Delete category"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>You don't have any categories yet! Add a new category below</p>
+        {% endif %}
+    </div>
+{% endblock %}

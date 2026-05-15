@@ -3,7 +3,7 @@
     --primary-colour: rgb(190, 190, 190);
     --secondary-colour: rgb(207, 207, 207);
     --tertiary-colour: rgb(226, 226, 226);
-    --bg-colour: rgb(195, 226, 236);
+    --bg-colour: rgb(231, 242, 246);
 
     --row-height: 0.75rem;
     --total-rows: 290;
@@ -54,7 +54,7 @@ a:hover {
 
 header {    
     .wide-content-container {
-        background-color: var(--bg-colour);
+        background-color: var(--primary-colour);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -100,7 +100,7 @@ header {
 }
 
 main {
-    background-color: rgb(225, 234, 242);
+    background-color: var(--bg-colour);
 }
 
 .title {
@@ -303,19 +303,17 @@ td {
     overflow-wrap: break-word; /* Breaks the really long word if it goes beyond the container width */
 }
 
-
-/* Categories modal */
-.white-bg-btn {
-    background-color: red;
-    padding: 0;
-    margin: 0;
+/* Edit and delete options */
+.edit-delete-options {
+    display: flex;
+    gap: 1rem;
 }
 
-.categories-dialog-content {
-    display: grid;
-
-    height: 15rem;
-    width: 25rem;
+/* Categories table */
+.categories-table {
+    table, th, td {
+        border-color: var(--bg-colour);
+    }
 }
 
 /* Footer */

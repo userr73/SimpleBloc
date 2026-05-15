@@ -64,15 +64,10 @@
 
                 <datalist id="categories-list">
                     {% for category in categories %}
-                        <option value="{{ category }}"></option>
+                        <option value="{{ category.category_name }}"></option>
                     {% endfor %}
                 </datalist>
 
-                <a href="#"><small class="trigger-categories" onclick="document.getElementById('categories-dialog').showModal(); return false" hx-get="/edit-categories" hx-target="#categories-dialog-content">Edit categories</small></a>
-                <dialog id="categories-dialog">
-                    <button type="button" class="white-bg-btn" onclick="document.getElementById('categories-dialog').close()" id="close-categories-dialog"><i class="fa-solid fa-xmark"></i></button>
-                    <div id="categories-dialog-content" class="categories-dialog-content"></div>
-                </dialog>
                 <div class="form-group-error">{{ errors.get('category', '') }}</div>
             </div>
 

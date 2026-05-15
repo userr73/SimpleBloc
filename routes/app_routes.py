@@ -1,8 +1,8 @@
 from flask import render_template, request, session, abort, redirect, url_for
 
 from application import app
-from utils.validators import validate_event, validate_date
-from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days
+from utils.validators import validate_event, validate_date, validate_category
+from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details
 from utils.db import get_db
 from utils.user_profile import get_user_profile
 
@@ -59,8 +59,8 @@ def timetable():
 @app.get('/add-event')
 def new_event_form():
     check_login()
-    categories_list = get_all_categories(session.get('user_id'))
-    return render_template('app/event-form.html', categories=categories_list)
+    categories = get_all_categories(session.get('user_id'))
+    return render_template('app/event-form.html', categories=categories)
 
 
 @app.post('/submit-new-event')
@@ -90,12 +90,13 @@ def add_event():
 
     # Get the user entered category name
     category_name = form_data['category']
-    
+   
+    # Prepare database connection
+    conn = get_db()
+    cursor = conn.cursor()
+
     if check_if_add_new_category(category_name, user_id):
         # Add the category string into the database
-        conn = get_db()
-        cursor = conn.cursor()
-
         sql = '''
             INSERT INTO Categories
                 (user_id,
@@ -109,16 +110,13 @@ def add_event():
         )
 
         cursor.execute(sql, data)
-
-        conn.commit()
-        conn.close()
-    
-    # Get the category id of the user inputted category name
-    category_id = get_category_id(user_id, category_name)
-
-    # Prepare database connection
-    conn = get_db()
-    cursor = conn.cursor()
+        
+        # Get the category id of the newly added category
+        category_id = cursor.lastrowid
+    else:
+        # Get the category id
+        category_id = get_category_id(user_id, category_name)
+        
 
     # Insert the trip data into the database
     sql = '''
@@ -154,12 +152,81 @@ def add_event():
 
 
 
-@app.get('/edit-categories')
-def edit_categories():
+@app.get('/categories')
+def view_categories():
     check_login()
+
+    # Get a list of all the category names
     categories = get_all_categories(session.get('user_id'))
     
     return render_template('app/categories.html', categories=categories)
+
+
+@app.get('/edit-category/<int:category_id>')
+def edit_category(category_id):
+    check_login()
+
+    # Check the category exists and belongs to the user
+    category = get_category_details(category_id, session.get('user_id'))
+    if not category:
+        abort(404)
+
+    return render_template('app/categories-edit.html', data=category)
+
+@app.post('/update-category')
+def update_category():
+    check_login()
+
+    form_data = {
+        'category_name': request.form.get('category_name').strip(),
+        'category_id': request.form.get('category_id')
+    }
+
+    # Validate the category name
+    errors = validate_category(form_data['category_name'])
+
+    if errors:
+        # Re-render the form with error messages
+        return render_template('app/categories-edit.html', errors=errors, data=form_data)
+
+    # Check that the category id was provided in the form
+    try:
+        category_id = int(form_data['category_id'])
+    except (ValueError, TypeError):
+        abort(400)
+
+    # Get the user id
+    user_id = session.get('user_id')
+
+    # Check that the category belongs to the user
+    category = get_category_details(category_id, user_id)
+    if not category:
+        abort(404)
+    
+    # Prepare database connection
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # TODO: TODO TODO AHHHH!!!
+    sql = '''
+        UPDATE Categories
+        SET category_name = ?
+        WHERE category_id = ?
+    '''
+
+    data = (
+        form_data['category_name'],
+        category_id
+    )
+
+    cursor.execute(sql, data)
+
+    # Commit changes and close database connection
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('view_categories'))
+    
 
 
 @app.get('/profile')

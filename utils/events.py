@@ -2,6 +2,20 @@ from datetime import date, timedelta
 
 from utils.db import get_db, query_all, query_one
 
+def get_category_details(category_id, user_id):
+    """Retrieves the dictionary of category details for a specific category and user"""
+    sql = '''
+        SELECT category_name, category_id
+        FROM Categories
+        WHERE category_id = ? AND user_id = ?
+    '''
+    data = (category_id, user_id)
+    category_details = query_one(sql, data)
+
+    # Return the category details or None if not found
+    return dict(category_details) if category_details else None
+
+
 def get_this_weeks_days(start_date):
     """Returns the seven dates (day) of the selected week"""
     dates = {}
@@ -112,28 +126,26 @@ def get_category_id(user_id, category_str):
 def get_all_categories(user_id):
     """Retrieve all the user's categories"""
     sql = '''
-        SELECT category_name 
+        SELECT *
         FROM Categories 
         WHERE user_id = ?
     '''
 
     data = (user_id,) 
-    categories_row_obj = query_all(sql, data)
+    categories = query_all(sql, data)
 
-    # Retrieve the category name from each row of the category object
-    categories_list = [category['category_name'] for category in categories_row_obj]
-
-    return categories_list
+    return categories
 
 
 def check_if_add_new_category(category_str, user_id):
     """Checks whether a user has entered a new category (case sensitive). Returns a boolean."""
-    categories_list = get_all_categories(user_id)
+    categories = get_all_categories(user_id)
 
-    if category_str not in categories_list:
-        return True
-
-    return False
+    for category in categories:
+        if category_str in category['category_name']:
+            return False
+    
+    return True
 
 
 def select_week_dates(selected_date):

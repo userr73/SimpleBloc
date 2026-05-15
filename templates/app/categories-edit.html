@@ -1,0 +1,28 @@
+{# Create an empty errors string if one does not exist #}
+{% if errors is not defined %}
+    {% set errors = '' %}
+{% endif %}
+
+{% if data is not defined %}
+    {% set data = {} %}
+{% endif %}
+
+{% extends "base/app_base.html" %}
+
+{% block title %}Your Categories{% endblock %}
+
+{% block main %}
+    <div class="narrow-content-container">
+        <h1>Edit Category Name</h1>
+        <form action="{{ url_for('update_category') }}" method="post">
+            <div class="form-group">
+                <label for="category_name">Category Name</label>
+                <input type="text" name="category_name" id="category_name" value="{{ data.get('category_name') }}">
+                <div class="form-group-error">{{ errors }}</div>
+            </div>
+
+            <input type="hidden" name="category_id" value="{{ data.get('category_id') }}">
+            <button type="submit">Save changes</button>
+        </form>
+    </div>
+{% endblock %}
