@@ -252,10 +252,18 @@ td {
     grid-template-columns: [time] auto [mon] 1fr [tue] 1fr [wed] 1fr [thu] 1fr [fri] 1fr [sat] 1fr [sun] 1fr; 
     grid-template-rows: auto, auto, repeat(calc(var(--total-rows) - 2), var(--row-height));
 
-    background-color: var(--tertiary-colour);
+    background-color: var(--primary-colour);
     gap: 1px;
-    /* border: 1px solid #ccc; */
+    border: 1px solid var(--primary-colour);
+
+    font-size: 0.85rem;
 }
+
+/* All grid types */
+.date-grid, .all-day-grid, .time-label, .calendar-slot {
+    background-color: var(--bg-colour);
+}
+
 
 /* First row - dates */
 .date-grid {
@@ -270,7 +278,7 @@ td {
     .day {
         align-content: center;
         font-size: 1.5rem;
-        background-color: var(--bg-colour);
+        background-color: var(--tertiary-colour);
 
         border-radius: 100rem;
         height: 3rem;
@@ -285,13 +293,18 @@ td {
 }
 
 /* Time labels (left-most side after the first two rows) */
-.time-labels {
+.time-label {
     grid-column: [time];
 }
 
+/* Left-most column */
+.left-col {
+    padding: 0 0.25rem;
+}
+
+
 /* 5-minute blocks */
 .calendar-slot {
-    background-color: white;
     height: var(--row-height);
 }
 
@@ -299,6 +312,7 @@ td {
 /* Calendar events */
 .calendar-event {
     padding: 0.25rem;
+
     overflow: hidden; /* Ensures that a really long word does not force the container to stretch its width */
     overflow-wrap: break-word; /* Breaks the really long word if it goes beyond the container width */
 }

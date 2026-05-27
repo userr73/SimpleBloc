@@ -2,6 +2,38 @@ from datetime import date, timedelta
 
 from utils.db import get_db, query_all, query_one
 
+def is_default_category(category_id):
+    """Checks whether a given category id is the default category (No category). Returns a boolean"""
+    sql = '''
+        SELECT category_name
+        FROM Categories
+        WHERE category_id = ?
+    '''
+    data = (category_id,)
+    category_obj = query_one(sql, data)
+    category_name = category_obj['category_name']
+
+    # Check whether the category is the default
+    if category_name == 'No category':
+        return True
+    
+    return False
+
+
+def get_event_details(event_id, user_id):
+    """Retrieves the dictionary of event details for a specific event and user"""
+    sql = '''
+        SELECT event_id, event_title, start_time, end_time, is_all_day_event
+        FROM Categories
+        WHERE event_id = ? AND user_id = ?
+    '''
+    data = (event_id, user_id)
+    event_details = query_one(sql, data)
+
+    # Return the category details or None if not found
+    return dict(event_details) if event_details else None
+
+
 def get_category_details(category_id, user_id):
     """Retrieves the dictionary of category details for a specific category and user"""
     sql = '''
@@ -128,10 +160,13 @@ def get_all_categories(user_id):
     sql = '''
         SELECT *
         FROM Categories 
-        WHERE user_id = ?
+        WHERE user_id = ? AND category_name != ?
     '''
 
-    data = (user_id,) 
+    data = (
+        user_id,
+        'No category'
+    ) 
     categories = query_all(sql, data)
 
     return categories

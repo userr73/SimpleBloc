@@ -108,6 +108,22 @@ def process_register_form():
     )
     
     cursor.execute(sql, data)
+
+    # Add the default category for the user
+    sql = '''
+        INSERT INTO Categories
+            (user_id,
+            category_name)
+        VALUES (?, ?)
+    '''
+
+    data = (
+        cursor.lastrowid,
+        'No category'
+    )
+
+    cursor.execute(sql, data)
+
     conn.commit()
     conn.close()
 

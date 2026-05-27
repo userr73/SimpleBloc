@@ -22,7 +22,7 @@
                         <td>
                             <div class="edit-delete-options">
                                 <a href="{{ url_for('edit_category', category_id=category.category_id) }}"><i class="fa-regular fa-pen-to-square" title="Rename category"></i></a>
-                                <a href="#"><i class="fa-regular fa-trash-can" title="Delete category"></i></a>
+                                <a href="{{ url_for('confirm_delete_category', category_id=category.category_id) }}"><i class="fa-regular fa-trash-can" title="Delete category"></i></a>
                             </div>
                         </td>
                     </tr>

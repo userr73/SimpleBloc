@@ -17,7 +17,7 @@
 
         <div class="weekly-timetable-container">
             <!-- Date row -->
-            <div class="date-grid" style="grid-column: {{ time }};">AEST</div>
+            <div class="date-grid left-col" style="grid-column: {{ time }};">AEST</div>
             {% for key, value in week_dates.items() %}
                 <div class="date-grid" style="grid-column: {{ loop.index + 1 }};">
                     <div>{{ key }}</div>
@@ -26,14 +26,14 @@
             {% endfor %}
             
             <!-- All day events row -->
-            <div class="all-day-grid" style="grid-column: {{ time }};">All day</div>
+            <div class="all-day-grid left-col" style="grid-column: {{ time }};">All day</div>
             {% for i in range(2, 9) %}
                 <div class="all-day-grid" style="grid-column: {{ i }};">all day event: {{i}}</div>
             {% endfor %}
 
             <!-- Time labels -->
             {% for i in range(0, 24) %}
-                <div class="time-label" style="grid-row: {{ (12*i)+3 }} / span 12;">{{i}}:00</div>
+                <div class="time-label left-col" style="grid-row: {{ (12*i)+3 }} / span 12;">{{i}}:00</div>
             {% endfor %}
 
             <!-- Main timetable -->
@@ -48,9 +48,13 @@
             <!-- Events -->
             {% for event in events %}
                 {% set style_dict = event_styles[loop.index0] %}
+                {% set style_row_start = style_dict.row_start %}
+                {% set style_row_end = style_dict.row_end %}
+                {% set row_difference = style_row_end - style_row_start %}
                 <div class="calendar-event"
-                    style="background-color: lightblue; grid-row: {{ style_dict.row_start }} / {{ style_dict.row_end }}; grid-column: {{ style_dict.col_name }};">
-                    {{ event.event_title }}
+                    style="background-color: lightblue; grid-row: {{ style_row_start }} / {{ style_row_end }}; grid-column: {{ style_dict.col_name }}; max-height: calc({{ 0.75 * row_difference }}rem + {{ 1 * row_difference }}px);">
+                    <p>{{ event.event_title }}</p>
+                    <p>{{ event.start_time }} – {{ event.end_time }}</p>
                 </div>
             {% endfor %}
         </div>

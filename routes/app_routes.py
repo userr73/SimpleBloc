@@ -2,9 +2,9 @@ from flask import render_template, request, session, abort, redirect, url_for
 
 from application import app
 from utils.validators import validate_event, validate_date, validate_category
-from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details
+from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category
 from utils.db import get_db
-from utils.user_profile import get_user_profile
+from utils.user_profile import get_user_profile, get_default_category_id
 
 def check_login():
     """Checks if a user id is set in the session"""
@@ -151,6 +151,19 @@ def add_event():
     return redirect(url_for('dashboard'))
 
 
+@app.get('/delete-event/<int:event_id>')
+def confirm_delete_event(event_id):
+    """Displays the confirmation page for deleting an event"""
+    check_login()
+
+    event = get_event_details(event_id, session.get('user_id'))
+
+    if not event:
+        abort(404)
+
+    return render_template('app/event-delete.html', data=event)
+
+
 
 @app.get('/categories')
 def view_categories():
@@ -169,6 +182,10 @@ def edit_category(category_id):
     # Check the category exists and belongs to the user
     category = get_category_details(category_id, session.get('user_id'))
     if not category:
+        abort(404)
+
+    # Check whether the category entered in the url is the default category (which every user must have)
+    if is_default_category(category_id):
         abort(404)
 
     return render_template('app/categories-edit.html', data=category)
@@ -207,7 +224,6 @@ def update_category():
     conn = get_db()
     cursor = conn.cursor()
 
-    # TODO: TODO TODO AHHHH!!!
     sql = '''
         UPDATE Categories
         SET category_name = ?
@@ -226,7 +242,68 @@ def update_category():
     conn.close()
 
     return redirect(url_for('view_categories'))
+
+
+@app.get('/delete-category/<int:category_id>')
+def confirm_delete_category(category_id):
+    """Displays confirmation page for deleting a category"""
+    check_login()
+
+    # Check the category belongs to user
+    category = get_category_details(category_id, session.get('user_id'))
+
+    if not category:
+        abort(404)
     
+    return render_template('app/categories-delete.html', data=category)
+
+
+@app.post('/delete-category')
+def delete_category():
+    """Handles the deletion of a category"""
+    check_login()
+
+    # Check that a valid category_id was provided in the form
+    try:
+        category_id = int(request.form.get('category_id'))
+    except (ValueError, TypeError):
+        abort(400)
+    
+    user_id = session.get('user_id')
+
+    # Check category belongs to user
+    category = get_category_details(category_id, user_id)
+
+    if not category:
+        abort(404)
+    
+    # Prepare database connection
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Change all events with that category_id to the default category's id
+    sql = '''
+        UPDATE Events
+        SET category_id = ?
+        WHERE category_id = ?
+    '''
+
+    data = (
+        get_default_category_id(user_id),
+        category_id
+    )
+
+    cursor.execute(sql, data)
+
+    # Delete the category from the database
+    sql = 'DELETE FROM Categories WHERE category_id = ?'
+    data = (category_id,)
+    cursor.execute(sql, data)
+
+    conn.commit()
+    conn.close()
+
+    return render_template('app/categories.html')
 
 
 @app.get('/profile')
