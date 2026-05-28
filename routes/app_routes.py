@@ -2,7 +2,7 @@ from flask import render_template, request, session, abort, redirect, url_for
 
 from application import app
 from utils.validators import validate_event, validate_date, validate_category
-from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category
+from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name
 from utils.db import get_db
 from utils.user_profile import get_user_profile, get_default_category_id
 
@@ -56,26 +56,75 @@ def timetable():
                            events=events, event_styles=events_style_ls, week_dates=week_dates)
 
 
+@app.get('/event/<int:event_id>')
+def view_event(event_id):
+    check_login()
+
+    # Get event dictionary
+    event = get_event_details(event_id, session.get('user_id'))
+
+    # Check that the event belongs to the user
+    if not event:
+        abort(404)
+    
+    # Get the event date
+    event_date_str = event['event_date']
+
+    # Find the day of the week of the event date
+    event_day_of_week = date_to_day_name(event_date_str)
+    event['day_of_week'] = event_day_of_week
+
+    # Convert event date to local formatting
+    event_date_formatted = date_to_local_format(event_date_str)
+    event['event_date'] = event_date_formatted
+
+    return render_template('app/event.html', event=event)
+
+
 @app.get('/add-event')
 def new_event_form():
     check_login()
     categories = get_all_categories(session.get('user_id'))
-    return render_template('app/event-form.html', categories=categories)
+    return render_template('app/event-form.html', mode='add', categories=categories)
+
+
+@app.get('/edit-event/<int:event_id>')
+def edit_event(event_id):
+    check_login()
+
+    # Check that the event belongs to the user
+    event = get_event_details(event_id, session.get('user_id'))
+    if not event:
+        abort(404)
+
+    # Get all user categories
+    categories = get_all_categories(session.get('user_id'))
+
+    return render_template('app/event-form.html', 
+                           mode='edit', 
+                           data=event, 
+                           categories=categories)
 
 
 @app.post('/submit-new-event')
-def add_event():
+def add_or_edit_event():
     check_login()
+
+    # Check existence and validity of mode
+    mode = request.form.get('mode')
+    if mode not in ['add', 'edit']:
+        abort(400)
     
     # Dictionary for form data - used to repopulate the form
     form_data = {
+        'event_id': request.form.get('event_id'), # Unused for adding a new event
         'event_date': request.form.get('event_date'),
         'start_time': request.form.get('start_time'),
         'is_all_day_event': 'is_all_day_event' in request.form,
         'end_time': request.form.get('end_time'),
         'event_title': request.form.get('event_title', '').strip(),
         'event_description': request.form.get('event_description', '').strip(),
-        'category': request.form.get('category', '').strip()
+        'category_name': request.form.get('category_name', '').strip()
     }
 
     # Validate the event submission for any errors
@@ -83,13 +132,17 @@ def add_event():
 
     if errors:
         # Re-render the template with error messages and form data
-        return render_template('app/event-form.html', errors=errors, data=form_data, categories=get_all_categories(session.get('user_id')))
+        return render_template('app/event-form.html', 
+                               mode=mode,
+                               errors=errors, 
+                               data=form_data, 
+                               categories=get_all_categories(session.get('user_id')))
 
     # Get the user id from the session
     user_id = session.get('user_id')
 
     # Get the user entered category name
-    category_name = form_data['category']
+    category_name = form_data['category_name']
    
     # Prepare database connection
     conn = get_db()
@@ -117,32 +170,71 @@ def add_event():
         # Get the category id
         category_id = get_category_id(user_id, category_name)
         
+    
+    if mode == 'add':
+        # Insert the trip data into the database
+        sql = '''
+            INSERT INTO Events
+                (user_id,
+                event_date,
+                start_time,
+                end_time,
+                is_all_day_event,
+                event_title,
+                event_description,
+                category_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        '''
+        data = (
+            user_id,
+            form_data['event_date'],
+            form_data['start_time'],
+            form_data['end_time'],
+            form_data['is_all_day_event'],
+            form_data['event_title'],
+            form_data['event_description'],
+            category_id
+        )
 
-    # Insert the trip data into the database
-    sql = '''
-        INSERT INTO Events
-            (user_id,
-            event_date,
-            start_time,
-            end_time,
-            is_all_day_event,
-            event_title,
-            event_description,
-            category_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    '''
-    data = (
-        user_id,
-        form_data['event_date'],
-        form_data['start_time'],
-        form_data['end_time'],
-        form_data['is_all_day_event'],
-        form_data['event_title'],
-        form_data['event_description'],
-        category_id
-    )
+        cursor.execute(sql, data)
+    
+    else:
+        # Check that a valid event ID was provided in the form
+        try:
+            event_id = int(request.form.get('event_id'))
+        except (ValueError, TypeError):
+            abort(400)
+        
+        # Check that the event belongs to the user
+        event = get_event_details(event_id, user_id)
+        if not event:
+            abort(404)
 
-    cursor.execute(sql, data)
+        # Save changes to the database
+        sql = '''
+            UPDATE Events
+            SET event_date = ?,
+                start_time = ?,
+                end_time = ?,
+                is_all_day_event = ?,
+                event_title = ?,
+                event_description = ?,
+                category_id = ?
+            WHERE event_id = ?
+        '''
+
+        data = (
+            form_data['event_date'],
+            form_data['start_time'],
+            form_data['end_time'],
+            form_data['is_all_day_event'],
+            form_data['event_title'],
+            form_data['event_description'],
+            category_id,
+            event_id
+        )
+
+        cursor.execute(sql, data)
 
     # Commit changes and close the database connection
     conn.commit()
@@ -156,8 +248,8 @@ def confirm_delete_event(event_id):
     """Displays the confirmation page for deleting an event"""
     check_login()
 
+    # Check that event belongs to user
     event = get_event_details(event_id, session.get('user_id'))
-
     if not event:
         abort(404)
 

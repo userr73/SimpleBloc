@@ -2,6 +2,13 @@ from datetime import date, timedelta
 
 from utils.db import get_db, query_all, query_one
 
+def date_to_local_format(data):
+    """Converts an ISO 8601 format date string into a formatted local date"""
+    date_obj = date.fromisoformat(data)
+
+    return date_obj.strftime('%x')
+
+
 def is_default_category(category_id):
     """Checks whether a given category id is the default category (No category). Returns a boolean"""
     sql = '''
@@ -23,10 +30,12 @@ def is_default_category(category_id):
 def get_event_details(event_id, user_id):
     """Retrieves the dictionary of event details for a specific event and user"""
     sql = '''
-        SELECT event_id, event_title, start_time, end_time, is_all_day_event
-        FROM Categories
-        WHERE event_id = ? AND user_id = ?
+        SELECT *
+        FROM Events
+        JOIN Categories on Categories.category_id = Events.category_id
+        WHERE Events.event_id = ? AND Events.user_id = ?
     '''
+
     data = (event_id, user_id)
     event_details = query_one(sql, data)
 
@@ -69,8 +78,8 @@ def time_to_row_num(event_time):
     return row_num
 
 
-def date_to_col_name(event_date):
-    """Returns the relevant column name based on the day of the week given"""
+def date_to_day_name(event_date):
+    """Returns the relevant day of the week name based on the date given"""
     # Convert the date to a date object
     date_obj = date.fromisoformat(event_date)
     
@@ -80,21 +89,21 @@ def date_to_col_name(event_date):
     # Match the day number with the relevant column name
     match day_num:
         case 1:
-            col_name = 'mon'
+            day_name = 'Monday'
         case 2:
-            col_name = 'tue'
+            day_name = 'Tuesday'
         case 3:
-            col_name = 'wed'
+            day_name = 'Wednesday'
         case 4:
-            col_name = 'thu'
+            day_name = 'Thursday'
         case 5:
-            col_name = 'fri'
+            day_name = 'Friday'
         case 6:
-            col_name = 'sat'
+            day_name = 'Saturday'
         case 7:
-            col_name = 'sun'
+            day_name = 'Sunday'
 
-    return col_name
+    return day_name
 
 
 def get_event_styling(events):
@@ -103,7 +112,7 @@ def get_event_styling(events):
 
     for event in events:
         # Get the column name
-        col_name = date_to_col_name(event['event_date'])
+        col_name = date_to_day_name(event['event_date'])
 
         # Get the row start and end numbers
         row_start = time_to_row_num(event['start_time'])

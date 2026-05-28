@@ -37,7 +37,7 @@
             {% endfor %}
 
             <!-- Main timetable -->
-            {% for day in ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] %}
+            {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
                 {% for row_num in range(3, 291) %}
                     <div class="calendar-slot" style="grid-row: {{ row_num }}; grid-column: {{ day }};">
                     </div>
@@ -51,11 +51,17 @@
                 {% set style_row_start = style_dict.row_start %}
                 {% set style_row_end = style_dict.row_end %}
                 {% set row_difference = style_row_end - style_row_start %}
-                <div class="calendar-event"
-                    style="background-color: lightblue; grid-row: {{ style_row_start }} / {{ style_row_end }}; grid-column: {{ style_dict.col_name }}; max-height: calc({{ 0.75 * row_difference }}rem + {{ 1 * row_difference }}px);">
+                <a href="" class="calendar-event"
+                    style="background-color: lightblue; grid-row: {{ style_row_start }} / {{ style_row_end }}; grid-column: {{ style_dict.col_name }}; max-height: calc({{ 0.5 * row_difference }}rem + {{ 1 * row_difference }}px);"
+                    onclick="document.getElementById('event-dialog').showModal()" hx-get="/event/{{ event.event_id }}" hx-target="#event-dialog-content">
                     <p>{{ event.event_title }}</p>
                     <p>{{ event.start_time }} – {{ event.end_time }}</p>
-                </div>
+                </a>
+
+                <dialog id="event-dialog">
+                    <button class='cross-icon' id="close-event-dialog" onclick="document.getElementById('event-dialog').close()"><i class="fa-solid fa-xmark"></i></button>
+                    <div class='event-dialog-content' id="event-dialog-content"></div>
+                </dialog>
             {% endfor %}
         </div>
     </div>

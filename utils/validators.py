@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, time, timedelta, datetime
 
 def validate_category(data):
     """Validates the category input field"""
@@ -95,10 +95,24 @@ def validate_event(data):
             except ValueError:
                 errors['end_time'] = 'Enter a valid time'
 
-        # End time must be later than start time
+
         if start_time and end_time:
+            # End time must be later than start time
             if end_time <= start_time:
                 errors['end_time'] = 'The end time must be later than the start time'
+            else:
+                # Check that the event is at least 10 min long
+                # Convert start time to a datetime object with a dummy date
+                start_time_date_obj = datetime.combine(date.today(), start_time)
+
+                # Add ten minutes to get the minimum end time
+                min_end_time_date_obj = start_time_date_obj + timedelta(minutes=10)
+                min_end_time = min_end_time_date_obj.time()
+                
+                # Event must be at least 10 min long
+                if end_time < min_end_time:
+                    errors['end_time'] = 'Event must be at least 10 minutes long'
+
 
     # Event title is mandatory
     if not data['event_title']:
@@ -109,8 +123,8 @@ def validate_event(data):
         errors['event_description'] = 'Enter the event description'
 
     # Category cannot be empty
-    if not data['category']:
-        errors['category'] = 'Enter a category'
+    if not data['category_name']:
+        errors['category_name'] = 'Enter a category'
 
     return errors
 

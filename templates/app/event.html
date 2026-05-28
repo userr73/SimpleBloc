@@ -1,0 +1,11 @@
+<div>
+    <div>
+        <h2>{{ event.event_title }}</h2>
+        <div class="edit-delete-options">
+            <a href="{{ url_for('edit_event', event_id=event.event_id) }}"><i class="fa-regular fa-pen-to-square" title="Edit event"></i></a>
+            <a href="{{ url_for('confirm_delete_event', event_id=event.event_id) }}"><i class="fa-regular fa-trash-can" title="Delete event"></i></a>
+        </div>
+    </div>
+    <p>{{ event.day_of_week }} {{ event.event_date }} | {{ event.start_time }} – {{ event.end_time }}</p>
+    <p>{{ event.event_description }}</p>
+</div>

@@ -9,14 +9,26 @@
 
 {% extends 'base/app_base.html' %}
 
-{% block title %}Add a New Event{% endblock %}
+{% block title %}
+    {% if mode == 'add' %}
+        Add a New Event
+    {% else %}
+        Edit an Event
+    {% endif %}
+{% endblock %}
+
 
 {% block main %}
     <div class="narrow-content-container">
-        <h1>Add New Event</h1>
-        <p>View and edit your timetable below</p>
+        {% if mode == 'add' %}
+            <h1>New Event</h1>
+            <p>Add a new event below</p>
+        {% else %}
+            <h1>Edit Event</h1>
+            <p>Edit your event below</p>
+        {% endif %}
 
-        <form action="{{ url_for('add_event') }}" method="post">
+        <form action="{{ url_for('add_or_edit_event') }}" method="post">
             <div class="title">Date and time</div>
 
             <div class="form-group">
@@ -29,8 +41,9 @@
                 <div class="form-group">
                     <label for="start_time">Start time</label>
                     <input type="time" name="start_time" id="start_time" value="{{ data.get('start_time', '') }}">
+                    <small>Minutes can only be in increments of 5</small>
                     <div class="form-group-error">{{ errors.get('start_time', '') }}</div>
-                    <div>
+                    <div class="checkbox-group">
                         <input type="checkbox" name="is_all_day_event" id="is_all_day_event" value="is_all_day_event" {{ 'checked' if data.get('is_all_day_event') }}>
                         <label for="is_all_day_event">All day event</label>
                     </div>
@@ -39,16 +52,17 @@
                 <div class="form-group">
                     <label for="end_time">End time</label>
                     <input type="time" name="end_time" id="end_time" value="{{ data.get('end_time', '') }}">
+                    <small>Minimum event length is 10 minutes</small>
                     <div class="form-group-error">{{ errors.get('end_time', '') }}</div>
                 </div>
             </div>
+
             
             <div class="title">Event details</div>
             
             <div class="form-group">
                 <label for="event_title">Title</label>
                 <input type="text" name="event_title" id="event_title" value="{{ data.get('event_title', '') }}">
-                <small>Max 50 characters</small>
                 <div class="form-group-error">{{ errors.get('event_title', '') }}</div>
             </div>
             
@@ -59,8 +73,8 @@
             </div>
             
             <div class="form-group">
-                <label for="category">Category</label>
-                <input list="categories-list" id="category" name="category" value="{{ data.get('category', '' ) }}">
+                <label for="category_name">Category</label>
+                <input list="categories-list" id="category_name" name="category_name" value="{{ data.get('category_name', '' ) }}">
 
                 <datalist id="categories-list">
                     {% for category in categories %}
@@ -68,11 +82,17 @@
                     {% endfor %}
                 </datalist>
 
-                <div class="form-group-error">{{ errors.get('category', '') }}</div>
+                <div class="form-group-error">{{ errors.get('category_name', '') }}</div>
             </div>
 
+            <input type="hidden" name="mode" value="{{ mode }}">
 
-            <button type="submit">Add event</button>
+            {% if mode == 'add' %}
+                <button type="submit">Add event</button>
+            {% else %}
+                <input type="hidden" name="event_id" value="{{ data.get('event_id') }}">
+                <button type="submit">Save changes</button>
+            {% endif %}
         </form>
     </div>
 {% endblock %}

@@ -5,7 +5,7 @@
     --tertiary-colour: rgb(226, 226, 226);
     --bg-colour: rgb(231, 242, 246);
 
-    --row-height: 0.75rem;
+    --row-height: 0.5rem;
     --total-rows: 290;
 }
 
@@ -249,7 +249,7 @@ td {
 /* Weekly timetable */
 .weekly-timetable-container {
     display: grid;
-    grid-template-columns: [time] auto [mon] 1fr [tue] 1fr [wed] 1fr [thu] 1fr [fri] 1fr [sat] 1fr [sun] 1fr; 
+    grid-template-columns: [time] auto [Monday] 1fr [Tuesday] 1fr [Wednesday] 1fr [Thursday] 1fr [Friday] 1fr [Saturday] 1fr [Sunday] 1fr; 
     grid-template-rows: auto, auto, repeat(calc(var(--total-rows) - 2), var(--row-height));
 
     background-color: var(--primary-colour);
@@ -311,10 +311,35 @@ td {
 
 /* Calendar events */
 .calendar-event {
+    display: block;
     padding: 0.25rem;
 
     overflow: hidden; /* Ensures that a really long word does not force the container to stretch its width */
     overflow-wrap: break-word; /* Breaks the really long word if it goes beyond the container width */
+}
+
+/* Events modal */
+dialog {
+    margin: auto auto;
+    height: 60%;
+    width: 50%;
+
+    border: none;
+    border-radius: 16px;
+}
+
+.event-dialog-content {
+    padding: 2rem 3rem;
+}
+
+.cross-icon {
+    background-color: transparent;
+    border: none;
+    border-radius: 4px;
+}
+
+.cross-icon:hover {
+    background-color: var(--tertiary-colour);
 }
 
 /* Edit and delete options */
