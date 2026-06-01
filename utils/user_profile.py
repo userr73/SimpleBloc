@@ -1,5 +1,20 @@
 from utils.db import query_one
 
+def get_quick_note(user_id):
+    """Retrieves the user's quick note"""
+    sql = '''
+        SELECT quick_note
+        FROM Users
+        WHERE user_id = ?
+    '''
+
+    data = (user_id,)
+
+    quick_note = query_one(sql, data)
+
+    return quick_note['quick_note']
+
+
 def get_default_category_id(user_id):
     """Retrieves the user's default category's category ID"""
     sql = '''

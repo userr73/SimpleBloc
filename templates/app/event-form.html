@@ -74,7 +74,8 @@
             
             <div class="form-group">
                 <label for="category_name">Category</label>
-                <input list="categories-list" id="category_name" name="category_name" value="{{ data.get('category_name', '' ) }}">
+                <input list="categories-list" id="category_name" name="category_name" value="{{ data.get('category_name', '' ) }}" onfocus="this.select()" autocomplete="off">
+                <small>Clear the text to see all existing categories</small>
 
                 <datalist id="categories-list">
                     {% for category in categories %}

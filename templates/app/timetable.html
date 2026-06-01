@@ -51,9 +51,9 @@
                 {% set style_row_start = style_dict.row_start %}
                 {% set style_row_end = style_dict.row_end %}
                 {% set row_difference = style_row_end - style_row_start %}
-                <a href="" class="calendar-event"
-                    style="background-color: lightblue; grid-row: {{ style_row_start }} / {{ style_row_end }}; grid-column: {{ style_dict.col_name }}; max-height: calc({{ 0.5 * row_difference }}rem + {{ 1 * row_difference }}px);"
-                    onclick="document.getElementById('event-dialog').showModal()" hx-get="/event/{{ event.event_id }}" hx-target="#event-dialog-content">
+                <a href="#" class="calendar-event"
+                    style="background-color: lightblue; grid-row: {{ style_row_start }} / {{ style_row_end }}; grid-column: {{ style_dict.col_name }}; max-height: calc({{ 0.5 * row_difference }}rem + {{ row_difference - 1 }}px);"
+                    onclick="document.getElementById('event-dialog').showModal(); return false;" hx-get="/event/{{ event.event_id }}" hx-target="#event-dialog-content">
                     <p>{{ event.event_title }}</p>
                     <p>{{ event.start_time }} – {{ event.end_time }}</p>
                 </a>

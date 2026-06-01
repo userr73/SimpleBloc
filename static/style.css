@@ -33,6 +33,10 @@ a:hover {
     text-decoration: none;
 }
 
+i {
+    font-size: 1.1rem;
+}
+
 /* Narrower content container for most information */
 .narrow-content-container {
     max-width: 80ch;
@@ -207,41 +211,42 @@ td {
             }
         }
     }
+}
 
-    /* Quick note container */
+/* Quick note container */
+.quick-note-container {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+
+    background-color: var(--tertiary-colour);
+    max-height: 16rem;
+
+    div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        
+        .title {
+            margin: 0;
+        }
+        
+        a {
+            background-color: var(--secondary-colour);
+            padding: 0.29rem 0.4rem;
+            border-radius: 8px;
+        }
+
+        i {
+            font-size: 1.5rem;
+        }
+    }
+
     .quick-note {
-        display: grid;
-        grid-template-rows: auto 1fr;
-        gap: 0.5rem;
-        padding: 1rem;
-        border-radius: 12px;
-
-        background-color: var(--tertiary-colour);
-        max-height: 16rem;
-
-        div {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            
-            .title {
-                margin: 0;
-            }
-            
-            a {
-                background-color: var(--secondary-colour);
-                padding: 0.29rem 0.4rem;
-                border-radius: 8px;
-            }
-
-            i {
-                font-size: 1.5rem;
-            }
-        }
-
-        p {
-            overflow: auto;
-        }
+        overflow: auto;
+        white-space: pre-wrap;
     }
 }
 
@@ -253,7 +258,7 @@ td {
     grid-template-rows: auto, auto, repeat(calc(var(--total-rows) - 2), var(--row-height));
 
     background-color: var(--primary-colour);
-    gap: 1px;
+    column-gap: 1px;
     border: 1px solid var(--primary-colour);
 
     font-size: 0.85rem;
@@ -262,6 +267,8 @@ td {
 /* All grid types */
 .date-grid, .all-day-grid, .time-label, .calendar-slot {
     background-color: var(--bg-colour);
+    
+    border-bottom: 1px solid red;
 }
 
 
@@ -312,7 +319,10 @@ td {
 /* Calendar events */
 .calendar-event {
     display: block;
+    border-bottom: 1px solid black;
+
     padding: 0.25rem;
+    min-height: 0;
 
     overflow: hidden; /* Ensures that a really long word does not force the container to stretch its width */
     overflow-wrap: break-word; /* Breaks the really long word if it goes beyond the container width */
@@ -348,12 +358,46 @@ dialog {
     gap: 1rem;
 }
 
+.modal-title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.event-description {
+    white-space: pre-wrap;
+}
+
 /* Categories table */
 .categories-table {
     table, th, td {
         border-color: var(--bg-colour);
     }
 }
+
+
+/* Profile page */
+.profile-options-container {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.profile-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    p {
+        margin-bottom: 0;
+    }
+
+    a {
+        border: 1px solid var(--primary-colour);
+        border-radius: 4px;
+        padding: 0.4rem 0.75rem;
+    }
+}
+
 
 /* Footer */
 footer {

@@ -3,8 +3,16 @@
 {% block title %}Quick Note{% endblock %}
 
 {% block main %}
-    <div class="wide-content-container">
+    <div class="narrow-content-container">
         <h1>Quick Note</h1>
-        <p>Edit quick note here!</p>
+
+        <form action="{{ url_for('update_quick_note') }}" method="post">
+            <div class="form-group">
+                <label for="quick_note">Edit quick note</label>
+                <textarea name="quick_note" id="quick_note">{{ quick_note }}</textarea> 
+            </div>
+
+            <button>Save changes</button>
+        </form>
     </div>
 {% endblock %}

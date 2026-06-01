@@ -2,6 +2,23 @@ from datetime import date, timedelta
 
 from utils.db import get_db, query_all, query_one
 
+def get_all_user_custom_categories(user_id):
+    """Retrieve all the user's categories except for the default category"""
+    sql = '''
+        SELECT *
+        FROM Categories 
+        WHERE user_id = ? AND category_name != ?
+    '''
+
+    data = (
+        user_id,
+        'No category'
+    )
+    categories = query_all(sql, data)
+
+    return categories
+    
+
 def date_to_local_format(data):
     """Converts an ISO 8601 format date string into a formatted local date"""
     date_obj = date.fromisoformat(data)
@@ -9,7 +26,7 @@ def date_to_local_format(data):
     return date_obj.strftime('%x')
 
 
-def is_default_category(category_id):
+def is_default_category(category_id, default_category_name):
     """Checks whether a given category id is the default category (No category). Returns a boolean"""
     sql = '''
         SELECT category_name
@@ -21,7 +38,7 @@ def is_default_category(category_id):
     category_name = category_obj['category_name']
 
     # Check whether the category is the default
-    if category_name == 'No category':
+    if category_name == default_category_name:
         return True
     
     return False
@@ -169,13 +186,10 @@ def get_all_categories(user_id):
     sql = '''
         SELECT *
         FROM Categories 
-        WHERE user_id = ? AND category_name != ?
+        WHERE user_id = ?
     '''
 
-    data = (
-        user_id,
-        'No category'
-    ) 
+    data = (user_id,)
     categories = query_all(sql, data)
 
     return categories

@@ -2,9 +2,9 @@ from flask import render_template, request, session, abort, redirect, url_for
 
 from application import app
 from utils.validators import validate_event, validate_date, validate_category
-from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name
+from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name
 from utils.db import get_db
-from utils.user_profile import get_user_profile, get_default_category_id
+from utils.user_profile import get_user_profile, get_default_category_id, get_quick_note
 
 def check_login():
     """Checks if a user id is set in the session"""
@@ -22,15 +22,59 @@ def dashboard():
 
     num_events = 2
 
-    quick_note = 'Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design andign and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form Finish dashboard design and start coding new event form '
+    # Retrieve the user's quick note from the database
+    quick_note = get_quick_note(session.get('user_id'))
 
-    return render_template('app/dashboard.html', events=events, count=num_events, quick_note=quick_note)
+    return render_template('app/dashboard.html', 
+                           events=events, 
+                           count=num_events, 
+                           quick_note=quick_note)
 
 
 @app.get('/edit-quick-note')
 def quick_note_form():
     check_login()
-    return render_template('app/quick-note.html')
+
+    # Retrieve the user's quick note from the database
+    quick_note = get_quick_note(session.get('user_id'))
+    print("USERS QUICK NOTE", quick_note)
+
+    return render_template('app/quick-note.html',
+                           quick_note=quick_note)
+
+
+@app.post('/edit-quick-note')
+def update_quick_note():
+    check_login()
+
+    # Retrieve the quick note value
+    quick_note = request.form.get('quick_note').strip()
+
+    # Get the user id from session
+    user_id = session.get('user_id')
+
+    # Prepare database connection
+    conn = get_db()
+    cursor = conn.cursor()
+
+    sql = '''
+        UPDATE Users
+        SET quick_note = ?
+        WHERE user_id = ?
+    '''
+
+    data = (
+        quick_note,
+        user_id
+    )
+
+    cursor.execute(sql, data)
+
+    # Commit changes and close database connection
+    conn.commit()
+    conn.close()
+
+    return redirect('dashboard')
 
 
 @app.get('/view-timetable')
@@ -85,7 +129,15 @@ def view_event(event_id):
 def new_event_form():
     check_login()
     categories = get_all_categories(session.get('user_id'))
-    return render_template('app/event-form.html', mode='add', categories=categories)
+    
+    data = {}
+    # Set the category name to always be the default
+    data['category_name'] = 'No category'
+
+    return render_template('app/event-form.html', 
+                           mode='add', 
+                           categories=categories, 
+                           data=data)
 
 
 @app.get('/edit-event/<int:event_id>')
@@ -252,17 +304,31 @@ def confirm_delete_event(event_id):
     event = get_event_details(event_id, session.get('user_id'))
     if not event:
         abort(404)
+    
+    # Get the event date
+    event_date_str = event['event_date']
+    
+    # Convert event date to local formatting
+    event_date_formatted = date_to_local_format(event_date_str)
+    event['event_date'] = event_date_formatted
 
-    return render_template('app/event-delete.html', data=event)
+    return render_template('app/event-delete.html', event=event)
 
+
+@app.post('/delete-event')
+def delete_event():
+    """Handles the deletion of an event"""
+    check_login()
+
+    return render_template('app/dashboard.html')
 
 
 @app.get('/categories')
 def view_categories():
     check_login()
 
-    # Get a list of all the category names
-    categories = get_all_categories(session.get('user_id'))
+    # Get a list of all the category names except the default
+    categories = get_all_user_custom_categories(session.get('user_id'))
     
     return render_template('app/categories.html', categories=categories)
 
@@ -277,7 +343,7 @@ def edit_category(category_id):
         abort(404)
 
     # Check whether the category entered in the url is the default category (which every user must have)
-    if is_default_category(category_id):
+    if is_default_category(category_id, 'No category'):
         abort(404)
 
     return render_template('app/categories-edit.html', data=category)
@@ -343,8 +409,11 @@ def confirm_delete_category(category_id):
 
     # Check the category belongs to user
     category = get_category_details(category_id, session.get('user_id'))
-
     if not category:
+        abort(404)
+
+    # Check whether the category entered in the url is the default category (which every user must have)
+    if is_default_category(category_id, 'No category'):
         abort(404)
     
     return render_template('app/categories-delete.html', data=category)
@@ -402,10 +471,24 @@ def delete_category():
 def view_profile():
     check_login()
 
-    # Get profile details
+    # Get user's email
     email_str = get_user_profile(session.get('user_id'))
 
     return render_template('app/profile.html', email=email_str)
+
+
+@app.get('/update-email')
+def email_form():
+    check_login()
+
+    return render_template('app/email.html')
+
+
+@app.get('/change-password')
+def password_form():
+    check_login()
+
+    return render_template('app/password.html')
 
 
 @app.get('/confirm-logout')

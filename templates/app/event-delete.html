@@ -5,8 +5,12 @@
 {% block main %}
     <div class="narrow-content-container">
         <h1>Confirm Delete</h1>
-        <p>idk</p>
+        <p>You are about to delete <b>{{ event.event_title }}</b> on {{ event.event_date }} ({{ event.start_time }} – {{ event.end_time }}). This action cannot be undone.</p>
 
-        {# <form action="{{  }}"></form> #}
+        <form action="{{ url_for('delete_event') }}" method="post">
+            <button>Delete</button>
+        </form>
+
+        <a href="{{ url_for('timetable') }}">Cancel</a>
     </div>
 {% endblock %}

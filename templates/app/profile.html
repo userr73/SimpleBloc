@@ -5,7 +5,23 @@
 {% block main %}
     <div class="narrow-content-container">
         <h1>Profile</h1>
-        <p>Email: {{ email }}</p>
-        <p>Password</p>
+
+        <div class="profile-options-container">
+            <div class="profile-options">
+                <div class="email-info">
+                    <p><b>Email</b></p>
+                    <p>{{ email }}</p>
+                </div>
+                <a href="{{ url_for('email_form') }}">Change Email</a>
+            </div>
+            
+            <div class="profile-options">
+                <div class="password-info">
+                    <p><b>Password</b></p>
+                    <p>Change your login password</p>
+                </div>
+                <a href="{{ url_for('password_form') }}">Change Password</a>
+            </div>
+        </div>
     </div>
 {% endblock %}
