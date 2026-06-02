@@ -1,7 +1,8 @@
 from flask import render_template, request, session, abort, redirect, url_for
+from werkzeug.security import generate_password_hash
 
 from application import app
-from utils.validators import validate_event, validate_date, validate_category
+from utils.validators import validate_event, validate_date, validate_category, validate_email, validate_password_change_form
 from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name
 from utils.db import get_db
 from utils.user_profile import get_user_profile, get_default_category_id, get_quick_note
@@ -74,7 +75,7 @@ def update_quick_note():
     conn.commit()
     conn.close()
 
-    return redirect('dashboard')
+    return redirect(url_for('dashboard'))
 
 
 @app.get('/view-timetable')
@@ -471,17 +472,66 @@ def delete_category():
 def view_profile():
     check_login()
 
-    # Get user's email
-    email_str = get_user_profile(session.get('user_id'))
+    # Get the user's profile information
+    profile = get_user_profile(session.get('user_id'))
 
-    return render_template('app/profile.html', email=email_str)
+    return render_template('app/profile.html', email=profile['email'])
 
 
 @app.get('/update-email')
 def email_form():
     check_login()
 
-    return render_template('app/email.html')
+    # Get the user's profile information
+    profile = get_user_profile(session.get('user_id'))
+
+    # Get user's email
+    email = profile['email']
+
+    return render_template('app/email.html', user_email=email)
+
+
+@app.post('/submit-email')
+def submit_email_change():
+    check_login()
+    # Get the email from the form for repopulation
+    user_email = request.form.get('user_email')
+
+    # Validate the email
+    errors = validate_email(user_email)
+    
+    if errors:
+        # Re-render the template with error messages and form data
+        return render_template('app/email.html',
+                               errors=errors,
+                               user_email=user_email)
+    
+    # Get the user id from the session
+    user_id = session.get('user_id')
+
+    # Prepare database connection
+    conn = get_db()
+    cursor = conn.cursor()
+
+    sql = '''
+        UPDATE Users
+        SET email = ?
+        WHERE user_id = ?
+    '''
+
+    data = (
+        user_email,
+        user_id
+    )
+
+    cursor.execute(sql, data)
+
+    # Commit changes and close the database connection
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('view_profile'))
+
 
 
 @app.get('/change-password')
@@ -489,6 +539,52 @@ def password_form():
     check_login()
 
     return render_template('app/password.html')
+
+
+@app.post('/submit-password')
+def submit_password_change():
+    check_login()
+
+    form_data = {
+        'current_pwd': request.form.get('current_pwd', '').strip(),
+        'new_pwd': request.form.get('new_pwd', '').strip(),
+        'confirm_new_pwd': request.form.get('confirm_new_pwd', '').strip()
+    }
+
+    # Get the user id
+    user_id = session.get('user_id')
+
+    # Check the form for errors
+    errors = validate_password_change_form(form_data, user_id)
+
+    if errors:
+        # Re-render the form with error messages
+        return render_template('app/password.html',
+                               data=form_data,
+                               errors=errors)
+
+    # Prepare the database connection
+    conn = get_db()
+    cursor = conn.cursor()
+
+    sql = '''
+        UPDATE Users
+        SET password_hash = ?
+        WHERE user_id = ?
+    '''
+
+    data = (
+        generate_password_hash(form_data['new_pwd']),
+        user_id
+    )
+
+    cursor.execute(sql, data)
+
+    # Commit changes and close database connection
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('view_profile'))
 
 
 @app.get('/confirm-logout')

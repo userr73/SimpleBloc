@@ -28,7 +28,9 @@ def process_login_form():
     if errors:
         # Re-render the form with error messages
         flash('Login failed. Please check the form and try again.', 'error-message')
-        return render_template('public/login.html', data=form_data, errors=errors)
+        return render_template('public/login.html', 
+                               data=form_data, 
+                               errors=errors)
     
     # Retrieve the user details from the database
     sql = 'SELECT * FROM Users WHERE email = ?'
@@ -54,7 +56,8 @@ def process_login_form():
 
         # Clear the password field and re-render the form with an error message
         form_data['password'] = ''
-        return render_template('public/login.html', data=form_data)
+        return render_template('public/login.html', 
+                               data=form_data)
 
 
 @app.get('/register')

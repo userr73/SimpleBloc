@@ -1,9 +1,54 @@
 from datetime import date, time, timedelta, datetime
+from utils.db import query_one
+from werkzeug.security import check_password_hash
 
-def validate_category(data):
-    """Validates the category input field"""
+def validate_password_change_form(form_data, user_id):
+    """Validates the password change form"""
+    # Create empty errors dictionary
+    errors = {}
+
+    # Current password must be entered
+    current_pwd = form_data['current_pwd']
+
+    if not current_pwd:
+        errors['current_pwd'] = 'Enter your current password'
+    else:
+        # Retrieve the user's password hash
+        sql = 'SELECT password_hash FROM Users WHERE user_id = ?'
+        data = (user_id,)
+        password_hash = query_one(sql, data)['password_hash']
+
+        # The password the user entered must match their current password
+        is_correct_pwd = check_password_hash(password_hash, current_pwd)
+
+        if not is_correct_pwd:
+            errors['current_pwd'] = 'Incorrect password'
+    
+    # New password is mandatory and must be at least 8 characters long
+    new_pwd = form_data['new_pwd']
+    if len(new_pwd) < 8:
+        errors['new_pwd'] = 'New password must be at least 8 characters long'
+
+    # Password confirmation must match password
+    if new_pwd != form_data['confirm_new_pwd']:
+        errors['confirm_new_pwd'] = 'Passwords do not match'
+
+    return errors
+
+
+def validate_email(email):
+    """Validates the email input field. Returns any error messages."""
+    # Email is mandatory and must be a valid email format
+    if '@' not in email or len(email) < 3:
+        return 'Enter a valid email address'
+    
+    return None
+
+
+def validate_category(category_name):
+    """Validates the category input field. Returns any error messages."""
     # Category cannot be empty
-    if not data:
+    if not category_name:
         return 'Enter a category'
     
     return None

@@ -34,17 +34,17 @@ def get_default_category_id(user_id):
 
 
 def get_user_profile(user_id):
-    """Retrieve the user's email"""
+    """Retrieve the user's profile information"""
     sql = '''
-        SELECT email 
+        SELECT email, password_hash
         FROM Users 
         WHERE user_id = ?
     '''
 
     data = (user_id,)
 
-    email = query_one(sql, data)
+    profile = query_one(sql, data)
 
-    return email['email']
+    return profile
 
 

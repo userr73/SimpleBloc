@@ -1,10 +1,25 @@
+{# Create an empty errors dictionary if one does not exist #}
+{% if errors is not defined %}
+    {% set errors = '' %}
+{% endif %}
+
 {% extends 'base/app_base.html' %}
 
 {% block title %}Edit your email{% endblock %}
 
 {% block main %}
-    <div class="wide-content-container">
+    <div class="narrow-content-container">
         <h1>Change Your Email</h1>
         <p>Enter the new email address you want to use for login below</p>
+
+        <form action="{{ url_for('submit_email_change') }}" method="post">
+            <div class="form-group">
+                <label for="user_email">New email</label>
+                <input type="email" name="user_email" id="user_email" value="{{ user_email }}">
+                <div class="form-group-error">{{ errors }}</div>
+            </div>
+
+            <button>Update email</button>
+        </form>
     </div>
 {% endblock %}
