@@ -1,6 +1,32 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, time
 
 from utils.db import get_db, query_all, query_one
+
+def get_overlapping_events(user_id, input_date, start_time, end_time):
+    """Retrieves the user's overlapping events on a given day, filtered with the start and end time to determine any overlapping events."""
+    sql = '''
+        SELECT start_time, end_time, event_title
+        FROM Events
+        WHERE event_date = ? AND user_id = ?
+    '''
+
+    data = (input_date, user_id)
+    
+    events = query_all(sql, data)
+    overlaps = []
+
+    for event in events:
+        event = dict(event)
+        existing_start_time = time.fromisoformat(event['start_time'])
+        existing_end_time = time.fromisoformat(event['end_time'])
+
+        if existing_start_time < start_time and existing_end_time > start_time:
+            overlaps.append(event['event_title'])
+        elif existing_start_time >= start_time and existing_start_time < end_time:
+            overlaps.append(event['event_title'])
+    
+    return overlaps
+
 
 def get_all_user_custom_categories(user_id):
     """Retrieve all the user's categories except for the default category"""

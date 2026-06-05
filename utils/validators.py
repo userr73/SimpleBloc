@@ -1,6 +1,7 @@
 from datetime import date, time, timedelta, datetime
-from utils.db import query_one
 from werkzeug.security import check_password_hash
+from utils.db import query_one
+from utils.events import get_overlapping_events
 
 def validate_password_change_form(form_data, user_id):
     """Validates the password change form"""
@@ -103,13 +104,14 @@ def validate_date(date_input):
     return valid_date
 
 
-def validate_event(data):
+def validate_event(data, user_id):
     """Validates the event form to add or edit an event"""
 
     # Dictionary for form errors
     errors = {}
 
     # Must be a valid date
+    event_date = None
     try:
         # Try to create a Python date object to verify it is a valid date
         event_date = date.fromisoformat(data['event_date'])
@@ -157,6 +159,12 @@ def validate_event(data):
                 # Event must be at least 10 min long
                 if end_time < min_end_time:
                     errors['end_time'] = 'Event must be at least 10 minutes long'
+                else:
+                    if event_date:
+                        overlaps = get_overlapping_events(user_id, event_date, start_time, end_time)
+
+                        if overlaps:
+                            errors['end_time'] = f'Event overlaps with existing event(s): {(', ').join(overlaps)}'
 
 
     # Event title is mandatory

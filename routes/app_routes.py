@@ -180,8 +180,11 @@ def add_or_edit_event():
         'category_name': request.form.get('category_name', '').strip()
     }
 
+    # Get the user id from the session
+    user_id = session.get('user_id')
+
     # Validate the event submission for any errors
-    errors = validate_event(form_data)
+    errors = validate_event(form_data, user_id)
 
     if errors:
         # Re-render the template with error messages and form data
@@ -190,9 +193,6 @@ def add_or_edit_event():
                                errors=errors, 
                                data=form_data, 
                                categories=get_all_categories(session.get('user_id')))
-
-    # Get the user id from the session
-    user_id = session.get('user_id')
 
     # Get the user entered category name
     category_name = form_data['category_name']
