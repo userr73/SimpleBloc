@@ -151,7 +151,7 @@ table, th, td {
     border-radius: 10px;
     
     .short-col {
-        width: 12ch;
+        width: 14ch;
     }
 }
 
@@ -222,7 +222,7 @@ td {
     border-radius: 12px;
 
     background-color: var(--tertiary-colour);
-    max-height: 16rem;
+    max-height: 15rem;
 
     div {
         display: flex;

@@ -18,8 +18,8 @@
                         <tbody>
                             {% for event in events %}
                                 <tr>
-                                    <td>{{ event.time }}</td>
-                                    <td>{{ event.event_details }}</td>
+                                    <td>{{ event.start_time }} – {{ event.end_time }}</td>
+                                    <td>{{ event.event_title }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

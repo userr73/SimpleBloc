@@ -2,6 +2,23 @@ from datetime import date, timedelta, time
 
 from utils.db import get_db, query_all, query_one
 
+def get_todays_events(user_id):
+    """Retrieve the user's events for the day."""
+    sql = '''
+        SELECT start_time, end_time, event_title
+        FROM Events
+        WHERE event_date = ? AND user_id = ?
+    '''
+
+    data = (
+        date.today(),
+        user_id
+    )
+
+    events = query_all(sql, data)
+
+    return events
+
 def get_overlapping_events(user_id, input_date, start_time, end_time):
     """Retrieves the user's overlapping events on a given day, filtered with the start and end time to determine any overlapping events."""
     sql = '''

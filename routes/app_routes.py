@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash
 
 from application import app
 from utils.validators import validate_event, validate_date, validate_category, validate_email, validate_password_change_form
-from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name
+from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name, get_todays_events
 from utils.db import get_db
 from utils.user_profile import get_user_profile, get_default_category_id, get_quick_note
 
@@ -16,12 +16,17 @@ def check_login():
 @app.get('/dashboard')
 def dashboard():
     check_login()
-    events = [
-        {'time': 'idk what format', 'event_details': 'Going to school'},
-        {'time': 'still dunno', 'event_details': 'Going HOME'}
-    ]
+    
+    # Get user id
+    user_id = session.get('user_id')
 
-    num_events = 2
+    # Get today's events
+    events = get_todays_events(user_id)
+
+    if events:
+        num_events = len(events)
+    else:
+        num_events = 0
 
     # Retrieve the user's quick note from the database
     quick_note = get_quick_note(session.get('user_id'))
