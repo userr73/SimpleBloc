@@ -95,4 +95,8 @@ form {
     .trigger-categories:hover {
         text-decoration: none;
     }
+
+    .date-selector {
+        border-color: black;
+    }
 }

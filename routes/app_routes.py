@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash
 
 from application import app
 from utils.validators import validate_event, validate_date, validate_category, validate_email, validate_password_change_form
-from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name, get_todays_events
+from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name, get_todays_events, date_forward_one_week, date_back_one_week
 from utils.db import get_db
 from utils.user_profile import get_user_profile, get_default_category_id, get_quick_note
 
@@ -89,6 +89,15 @@ def timetable():
 
     # Validate the selected date and convert into a date object
     date_selected = validate_date(request.args.get('date_selected'))
+
+    # Check if the back or next button was clicked
+    action = request.args.get('action')
+    if action == 'back':
+        new_date = date_back_one_week(date_selected)
+        return redirect(url_for('timetable', date_selected=new_date))
+    if action == 'next':
+        new_date = date_forward_one_week(date_selected)
+        return redirect(url_for('timetable', date_selected=new_date))
 
     # Figure out what the first and last day of the week the selected date is in
     start_date, end_date = select_week_dates(date_selected)

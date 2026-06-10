@@ -2,6 +2,20 @@ from datetime import date, timedelta, time
 
 from utils.db import get_db, query_all, query_one
 
+def date_forward_one_week(date_input):
+    """Returns the date a week in the future"""
+    # Remove 7 days
+    next_week_date = date_input + timedelta(days=7)
+
+    return next_week_date
+
+def date_back_one_week(date_input):
+    """Returns the date a week prior"""
+    # Remove 7 days
+    previous_week_date = date_input - timedelta(days=7)
+
+    return previous_week_date
+
 def get_todays_events(user_id):
     """Retrieve the user's events for the day."""
     sql = '''
