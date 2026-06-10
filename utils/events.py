@@ -161,8 +161,19 @@ def get_event_styling(events):
         row_start = time_to_row_num(event['start_time'])
         row_end = time_to_row_num(event['end_time'])
 
+        # Determine the border bottom colour
+        if row_end % 12 == 3:
+            border_bottom_colour = 'rgb(190, 190, 190)'
+        else:
+            border_bottom_colour = 'transparent'
+
         # Add these column and row values to a dictionary
-        event_dict = {'col_name': col_name, 'row_start': row_start, 'row_end': row_end}
+        event_dict = {
+            'col_name': col_name, 
+            'row_start': row_start, 
+            'row_end': row_end,
+            'border_bottom_colour': border_bottom_colour
+        }
 
         # Add the dictionary as a list item
         events_style_ls.append(event_dict)

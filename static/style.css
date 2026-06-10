@@ -267,10 +267,12 @@ td {
 /* All grid types */
 .date-grid, .all-day-grid, .time-label, .calendar-slot {
     background-color: var(--bg-colour);
-    
-    border-bottom: 1px solid red;
 }
 
+/* Not including the calendar slots which have dynamic styling for border */
+.date-grid, .all-day-grid, .time-label {
+    border-bottom: 1px solid var(--primary-colour);
+}
 
 /* First row - dates */
 .date-grid {

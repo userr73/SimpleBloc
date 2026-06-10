@@ -97,8 +97,13 @@ def timetable():
     # Get every day of the selected week to display
     week_dates = get_this_weeks_days(start_date)
     
-    return render_template('app/timetable.html', date_selected=date_selected, start_date=start_date, end_date=end_date, 
-                           events=events, event_styles=events_style_ls, week_dates=week_dates)
+    return render_template('app/timetable.html', 
+                           date_selected=date_selected, 
+                           start_date=start_date, 
+                           end_date=end_date, 
+                           events=events, 
+                           event_styles=events_style_ls, 
+                           week_dates=week_dates)
 
 
 @app.get('/event/<int:event_id>')
@@ -320,6 +325,33 @@ def confirm_delete_event(event_id):
 def delete_event():
     """Handles the deletion of an event"""
     check_login()
+
+    # Check that a valid event_id was provide in the form
+    try:
+        event_id = int(request.form.get('event_id'))
+    except (ValueError, TypeError):
+        abort(400)
+    
+    # Get the user id from session
+    user_id = session.get('user_id')
+
+    # Check event belongs to the user
+    event = get_event_details(event_id, user_id)
+    if not event:
+        abort(404)
+    
+    # Prepare database connection
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Delete the event from the dataabs
+    sql = 'DELETE FROM Events WHERE event_id = ?'
+    data = (event_id,)
+    cursor.execute(sql, data)
+
+    # Commit and close database connection
+    conn.commit()
+    conn.close()
 
     return render_template('app/dashboard.html')
 
