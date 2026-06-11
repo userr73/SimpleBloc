@@ -297,8 +297,10 @@ td {
 
 /* Second row - all day events */
 .all-day-grid {
-    grid-row: 2;
+    overflow: auto;
     height: 8rem;
+    
+    grid-row: 2;
 }
 
 /* Time labels (left-most side after the first two rows) */
@@ -317,17 +319,29 @@ td {
     height: var(--row-height);
 }
 
+/* All-day events */
+.all-day-event {
+    display: block;
+    background-color: red;
+}
 
 /* Calendar events */
 .calendar-event {
     display: block;
     border-bottom: 1px solid black;
 
-    padding: 0.25rem;
     min-height: 0;
 
     overflow: hidden; /* Ensures that a really long word does not force the container to stretch its width */
     overflow-wrap: break-word; /* Breaks the really long word if it goes beyond the container width */
+}
+
+.all-day-event, .calendar-event {
+    padding: 0.25rem;
+
+    p {
+        margin-bottom: 0;
+    }
 }
 
 /* Events modal */

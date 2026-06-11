@@ -18,18 +18,39 @@ def date_back_one_week(date_input):
 
 def get_todays_events(user_id):
     """Retrieve the user's events for the day."""
+    # Get the all day events first
     sql = '''
-        SELECT start_time, end_time, event_title
+        SELECT start_time, end_time, is_all_day_event, event_title
         FROM Events
-        WHERE event_date = ? AND user_id = ?
+        WHERE event_date = ? 
+        AND user_id = ?
+        AND is_all_day_event = ?
     '''
 
     data = (
         date.today(),
-        user_id
+        user_id,
+        1
     )
 
     events = query_all(sql, data)
+
+    # Get the remaining events
+    sql = '''
+        SELECT start_time, end_time, is_all_day_event, event_title
+        FROM Events
+        WHERE event_date = ? 
+        AND user_id = ?
+        AND is_all_day_event = ?
+    '''
+
+    data = (
+        date.today(),
+        user_id,
+        0
+    )
+
+    events.extend(query_all(sql, data))
 
     return events
 
@@ -38,18 +59,24 @@ def get_overlapping_events(user_id, input_date, start_time, end_time):
     sql = '''
         SELECT start_time, end_time, event_title
         FROM Events
-        WHERE event_date = ? AND user_id = ?
+        WHERE event_date = ? 
+        AND user_id = ?
+        AND is_all_day_event = ?
     '''
 
-    data = (input_date, user_id)
+    data = (
+        input_date, 
+        user_id,
+        0
+    )
     
     events = query_all(sql, data)
     overlaps = []
 
     for event in events:
         event = dict(event)
-        existing_start_time = time.fromisoformat(event['start_time'])
-        existing_end_time = time.fromisoformat(event['end_time'])
+        existing_start_time = start_time
+        existing_end_time = end_time
 
         if existing_start_time < start_time and existing_end_time > start_time:
             overlaps.append(event['event_title'])
@@ -212,8 +239,11 @@ def get_event_styling(events):
     return events_style_ls
 
 
-def get_this_week_events(user_id, start, end):
+def get_this_weeks_events(user_id, start, end):
     """Retrieves one week of events based on the given start and end date"""
+    week_events = {}
+
+    # Get the normal events
     sql = '''
         SELECT *
         FROM Events
@@ -221,15 +251,99 @@ def get_this_week_events(user_id, start, end):
         WHERE Events.user_id = ?
         AND event_date >= ?
         AND event_date <= ?
+        AND is_all_day_event = ?
     '''
-    # NOTE: do I need to order by date ascending?
 
-    data = (user_id, start, end)
+    data = (
+        user_id, 
+        start, 
+        end,
+        0
+    )
 
-    events = query_all(sql, data)
+    normal_events = query_all(sql, data)
 
-    return events
+    week_events['normal'] = normal_events
 
+    # Get the all day events
+    sql = '''
+        SELECT *
+        FROM Events
+        JOIN Categories on Categories.category_id = Events.category_id
+        WHERE Events.user_id = ?
+        AND event_date >= ?
+        AND event_date <= ?
+        AND is_all_day_event = ?
+        ORDER BY event_date ASC
+    '''
+
+    data = (
+        user_id, 
+        start, 
+        end,
+        1
+    )
+
+    all_day_events = query_all(sql, data)
+
+    if all_day_events:
+        sorted_ad_events = {}
+        # Get the number of all day events
+        num_events = len(all_day_events)
+
+        # Set current date to the start date provided
+        current_date = start
+        
+        # Set the initial day number to 1
+        day_num = 1
+
+        for event in all_day_events:
+            # Get the event date date object
+            event_date_obj = date.fromisoformat(event['event_date'])
+
+            if event_date_obj == current_date:
+                sorted_ad_events[day_num].append(event)
+            else:
+                # Check if the day number is a key in the dictionary
+                if day_num not in sorted_ad_events:
+                    sorted_ad_events[day_num] = None
+                
+                # Get the difference in the previous day and new day
+                difference = num_days_difference(current_date, event_date_obj)
+                new_day_num = day_num + difference
+
+                # For day numbers between current day and new day (non-inclusive)
+                # they should be assigned None as well
+                for i in range(day_num+1, new_day_num):
+                    sorted_ad_events[i] = None
+                
+                day_num = new_day_num
+                current_date = event_date_obj
+
+                # Add the new key value pair 
+                sorted_ad_events[day_num] = [event]
+        
+        # Set value as None for remaining day numbers if there are no all day events
+        while day_num < 7:
+            day_num += 1
+            sorted_ad_events[day_num] = None
+    
+        week_events['all_day'] = sorted_ad_events
+    else:
+        no_all_day_dict = {}
+        for i in range(1, 8):
+            no_all_day_dict[i] = None
+        
+        week_events['all_day'] = no_all_day_dict
+
+    return week_events
+
+
+def num_days_difference(start, end):
+    """Returns the number of days between two date objects"""
+    difference = end - start
+
+    return difference.days
 
 
 def get_category_id(user_id, category_str):

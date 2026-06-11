@@ -11,7 +11,6 @@
             <input class="date-selector" type="date" id='date_selected' name='date_selected' value="{{ date_selected }}" onkeydown="return false" onclick="this.showPicker()">
             <button name="action" value="next"><i class="fa-solid fa-angle-right"></i></button>
         </form>
-
      
         <div class="weekly-timetable-container">
             <!-- Date row -->
@@ -25,8 +24,24 @@
             
             <!-- All day events row -->
             <div class="all-day-grid left-col" style="grid-column: {{ time }};">All day</div>
-            {% for i in range(2, 9) %}
-                <div class="all-day-grid" style="grid-column: {{ i }};">all day event: {{i}}</div>
+            {% for day_num, events in all_day_events.items() %}
+                <div class="all-day-grid" style="grid-column: {{ day_num + 1 }};">
+                    {% if events %}
+                        {% for event in events %}
+                            <a href="#" class="all-day-event"
+                                style="background-color: lightblue;"
+                                onclick="document.getElementById('event-dialog').showModal(); return false;" 
+                                hx-get="/event/{{ event.event_id }}" hx-target="#event-dialog-content">
+                                <p>{{ event.event_title }}</p>
+                            </a>
+
+                            <dialog id="event-dialog">
+                                <button class='cross-icon' id="close-event-dialog" onclick="document.getElementById('event-dialog').close()"><i class="fa-solid fa-xmark"></i></button>
+                                <div class='event-dialog-content' id="event-dialog-content"></div>
+                            </dialog>
+                        {% endfor %}
+                    {% endif %}
+                </div>
             {% endfor %}
 
             <!-- Time labels -->
@@ -49,7 +64,7 @@
 
 
             <!-- Events -->
-            {% for event in events %}
+            {% for event in normal_events %}
                 {% set style_dict = event_styles[loop.index0] %}
 
                 <!-- Create simpler variable names for each of the values in the dictionary -->

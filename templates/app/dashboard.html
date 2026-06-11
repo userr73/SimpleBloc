@@ -18,7 +18,11 @@
                         <tbody>
                             {% for event in events %}
                                 <tr>
-                                    <td>{{ event.start_time }} – {{ event.end_time }}</td>
+                                    {% if event.is_all_day_event %}
+                                        <td>All day</td>
+                                    {% else %}
+                                        <td>{{ event.start_time }} – {{ event.end_time }}</td>
+                                    {% endif %}
                                     <td>{{ event.event_title }}</td>
                                 </tr>
                             {% endfor %}

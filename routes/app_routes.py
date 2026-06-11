@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash
 
 from application import app
 from utils.validators import validate_event, validate_date, validate_category, validate_email, validate_password_change_form
-from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_week_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name, get_todays_events, date_forward_one_week, date_back_one_week
+from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_weeks_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name, get_todays_events, date_forward_one_week, date_back_one_week
 from utils.db import get_db
 from utils.user_profile import get_user_profile, get_default_category_id, get_quick_note
 
@@ -99,14 +99,17 @@ def timetable():
         new_date = date_forward_one_week(date_selected)
         return redirect(url_for('timetable', date_selected=new_date))
 
-    # Figure out what the first and last day of the week the selected date is in
+    # Get the start and end date date objects of the week
     start_date, end_date = select_week_dates(date_selected)
     
     # Get the user's events for the selected week
-    events = get_this_week_events(session.get('user_id'), start_date, end_date)
+    events = get_this_weeks_events(session.get('user_id'), start_date, end_date)
 
-    # Get styling information for the events
-    events_style_ls = get_event_styling(events)
+    # Normal events
+    normal_events = events['normal']
+
+    # Get styling information for normal events
+    events_style_ls = get_event_styling(normal_events)
 
     # Get every day of the selected week to display
     week_dates = get_this_weeks_days(start_date)
@@ -115,8 +118,9 @@ def timetable():
                            date_selected=date_selected, 
                            start_date=start_date, 
                            end_date=end_date, 
-                           events=events, 
+                           normal_events=normal_events, 
                            event_styles=events_style_ls, 
+                           all_day_events=events['all_day'],
                            week_dates=week_dates)
 
 
