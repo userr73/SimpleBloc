@@ -101,13 +101,15 @@ def process_register_form():
     sql = '''
         INSERT INTO Users
             (email,
-            password_hash)
-        VALUES (?, ?)
+            password_hash,
+            quick_note)
+        VALUES (?, ?, ?)
     '''
     
     data = (
         form_data['email'],
         generate_password_hash(form_data['password']),
+        ''
     )
     
     cursor.execute(sql, data)
@@ -116,13 +118,15 @@ def process_register_form():
     sql = '''
         INSERT INTO Categories
             (user_id,
-            category_name)
-        VALUES (?, ?)
+            category_name,
+            category_colour)
+        VALUES (?, ?, ?)
     '''
 
     data = (
         cursor.lastrowid,
-        'No category'
+        'No category',
+        '#D3D3D3'
     )
 
     cursor.execute(sql, data)

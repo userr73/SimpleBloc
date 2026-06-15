@@ -8,7 +8,7 @@ CREATE TABLE Users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL,
     password_hash TEXT NOT NULL,
-    quick_note TEXT
+    quick_note TEXT NOT NULL
 );
 
 -- Details of all categories created by users
@@ -16,7 +16,7 @@ CREATE TABLE Categories (
     category_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     category_name TEXT NOT NULL,
-    colour TEXT, -- TEMP: should be TEXT NOT NULL
+    category_colour TEXT, -- TEMP: should be TEXT NOT NULL
     
     FOREIGN KEY (user_id) REFERENCES Users (user_id)
 );

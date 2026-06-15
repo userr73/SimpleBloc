@@ -30,7 +30,15 @@
                 </tbody>
             </table>
         {% else %}
-            <p>You don't have any categories yet! Add a new category below</p>
+            <p>You don't have any categories yet.</p>
         {% endif %}
+        
+        <p>Add a new category</p>
+        <a class='big-btn' href="{{ url_for('new_event_form') }}">
+            <div>
+                <i class="fa-solid fa-plus"></i>
+                <p>Add new category NEED ANOTHER FORM FOR THIS</p>
+            </div>
+        </a>
     </div>
 {% endblock %}

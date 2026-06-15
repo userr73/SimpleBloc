@@ -2,8 +2,8 @@ from flask import render_template, request, session, abort, redirect, url_for
 from werkzeug.security import generate_password_hash
 
 from application import app
-from utils.validators import validate_event, validate_date, validate_category, validate_email, validate_password_change_form
-from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_weeks_events, get_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name, get_todays_events, date_forward_one_week, date_back_one_week
+from utils.validators import validate_event, validate_date, validate_category_form, validate_email, validate_password_change_form
+from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_weeks_events, get_normal_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name, get_todays_events, date_forward_one_week, date_back_one_week, get_all_day_event_styling, random_colour
 from utils.db import get_db
 from utils.user_profile import get_user_profile, get_default_category_id, get_quick_note
 
@@ -109,7 +109,13 @@ def timetable():
     normal_events = events['normal']
 
     # Get styling information for normal events
-    events_style_ls = get_event_styling(normal_events)
+    normal_events_style_ls = get_normal_event_styling(normal_events)
+    
+    # All day events
+    all_day_events = events['all_day']
+
+    # Get styling information for all day events
+    all_day_events_style_ls = get_all_day_event_styling(all_day_events)
 
     # Get every day of the selected week to display
     week_dates = get_this_weeks_days(start_date)
@@ -119,8 +125,9 @@ def timetable():
                            start_date=start_date, 
                            end_date=end_date, 
                            normal_events=normal_events, 
-                           event_styles=events_style_ls, 
-                           all_day_events=events['all_day'],
+                           normal_styles=normal_events_style_ls, 
+                           all_day_events=all_day_events,
+                           all_day_styles=all_day_events_style_ls, 
                            week_dates=week_dates)
 
 
@@ -206,6 +213,19 @@ def add_or_edit_event():
     # Get the user id from the session
     user_id = session.get('user_id')
 
+    # Validate the event ID first and check authorisation
+    if mode == 'edit':
+        # Check that a valid event ID was provided in the form
+        try:
+            event_id = int(form_data['event_id'])
+        except (ValueError, TypeError):
+            abort(400)
+    
+        # Check that the event belongs to the user
+        event = get_event_details(event_id, user_id)
+        if not event:
+            abort(404)
+
     # Validate the event submission for any errors
     errors = validate_event(form_data, user_id)
 
@@ -229,13 +249,15 @@ def add_or_edit_event():
         sql = '''
             INSERT INTO Categories
                 (user_id,
-                category_name)
-            VALUES (?, ?)
+                category_name,
+                category_colour)
+            VALUES (?, ?, ?)
         '''
 
         data = (
             session.get('user_id'),
-            category_name
+            category_name,
+            random_colour()
         )
 
         cursor.execute(sql, data)
@@ -275,17 +297,6 @@ def add_or_edit_event():
         cursor.execute(sql, data)
     
     else:
-        # Check that a valid event ID was provided in the form
-        try:
-            event_id = int(request.form.get('event_id'))
-        except (ValueError, TypeError):
-            abort(400)
-        
-        # Check that the event belongs to the user
-        event = get_event_details(event_id, user_id)
-        if not event:
-            abort(404)
-
         # Save changes to the database
         sql = '''
             UPDATE Events
@@ -404,12 +415,13 @@ def update_category():
     check_login()
 
     form_data = {
-        'category_name': request.form.get('category_name').strip(),
+        'category_name': request.form.get('category_name', '').strip(),
+        'category_colour': request.form.get('category_colour'),
         'category_id': request.form.get('category_id')
     }
 
     # Validate the category name
-    errors = validate_category(form_data['category_name'])
+    errors = validate_category_form(form_data)
 
     if errors:
         # Re-render the form with error messages
@@ -435,12 +447,14 @@ def update_category():
 
     sql = '''
         UPDATE Categories
-        SET category_name = ?
+        SET category_name = ?,
+            category_colour = ?
         WHERE category_id = ?
     '''
 
     data = (
         form_data['category_name'],
+        form_data['category_colour'],
         category_id
     )
 
@@ -515,7 +529,7 @@ def delete_category():
     conn.commit()
     conn.close()
 
-    return render_template('app/categories.html')
+    return redirect(url_for('view_categories'))
 
 
 @app.get('/profile')

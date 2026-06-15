@@ -3,6 +3,8 @@ from werkzeug.security import check_password_hash
 from utils.db import query_one
 from utils.events import get_overlapping_events
 
+import re
+
 def validate_password_change_form(form_data, user_id):
     """Validates the password change form"""
     # Create empty errors dictionary
@@ -46,13 +48,30 @@ def validate_email(email):
     return None
 
 
-def validate_category(category_name):
-    """Validates the category input field. Returns any error messages."""
-    # Category cannot be empty
-    if not category_name:
-        return 'Enter a category'
+def is_valid_hex(input_colour):
+    """Validates a string to determine whether it is a valid 6 digit hex value. Returns a boolean"""
+    valid_structure = r"^#([A-Fa-f0-9]{6})$"
+    return bool(re.match(valid_structure, input_colour))
+
+
+def validate_category_form(data):
+    """Validates the category form"""
+    # Dictionary for form errors
+    errors = {}
     
-    return None
+    # Category cannot be empty
+    if not data['category_name']:
+        errors['category_name'] = 'Enter a category name'
+    
+    # Colour is mandatory
+    colour = data['category_colour']
+    if not colour:
+        errors['category_colour'] = 'Select a colour'
+    else:
+        if not is_valid_hex(colour):
+            errors['category_colour'] = 'Valid colours only'
+    
+    return errors
 
 
 def validate_login(data):
@@ -161,7 +180,8 @@ def validate_event(data, user_id):
                     errors['end_time'] = 'Event must be at least 10 minutes long'
                 else:
                     if event_date:
-                        overlaps = get_overlapping_events(user_id, event_date, start_time, end_time)
+                        event_id = data['event_id']
+                        overlaps = get_overlapping_events(user_id, event_id, event_date, start_time, end_time)
 
                         if overlaps:
                             errors['end_time'] = f'Event overlaps with existing event(s): {(', ').join(overlaps)}'

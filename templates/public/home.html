@@ -3,8 +3,51 @@
 {% block title %}Welcome to SimpleBloc{% endblock %}
 
 {% block main %}
-    <div class="narrow-content-container">
-        <h1>Welcome to SimpleBloc!</h1>
-        <p>SimpleBloc is a timetabling tool that allows you to visualise your schedule through time blocking, offering a flexible way to plan events and tasks. Start boosting your productivity today.</p>
+    <div class="homepage">
+        <div class="section top-section">
+            <div>
+                <h1>Welcome to SimpleBloc!</h1>
+                <p>SimpleBloc is a timetabling tool that allows you to visualise your schedule through time blocking, offering a flexible way to plan events and tasks. Start boosting your productivity today.</p>
+                <a href="{{ url_for('login_form') }}" class="btn">Get started</a>
+            </div>
+            <img src="https://picsum.photos/300/200" alt="">
+        </div>
+
+        <div class="alternate-section">
+            <div>
+                <h2>Explore key features</h2>
+
+                <div class="explore-section">
+                    <div class="explore-card">
+                        <i class="fa-solid fa-calendar-week"></i>
+                        <h3>Time Blocking</h3>
+                        <p>A clear, visual method of presenting and organising your schedule. Blocks reflect the duration of events and help avoid overlapping tasks.</p>
+                    </div>
+
+                    <div class="explore-card">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <h3>Simple Dashboard</h3>
+                        <p>A simple dashboard with a quality timetable so you can quickly get back on track with your events or tasks for today.</p>
+                    </div>
+
+                    <div class="explore-card">
+                        <i class="fa-solid fa-note-sticky"></i>
+                        <h3>Quick Note</h3>
+                        <p>A space in your dashbaord to note down any quick reminders you have.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-card">
+                <h2>Ready to start planning?</h2>
+                <p>If you don't have an account, register today! Sign up is free and simple – enter and submit your details, and you'll be able to use SimpleBloc in no time.</p>
+                <div class="two-options">
+                    <a href="{{ url_for('register_form') }}" class="btn">Create Free Account</a>
+                    <p>Already have an account? <a href="{{ url_for('login_form') }}">Login here</a></p>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

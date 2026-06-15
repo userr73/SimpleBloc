@@ -1,9 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap");
+
 :root {
-    --primary-font-colour: rgb(12, 12, 112);
-    --primary-colour: rgb(190, 190, 190);
-    --secondary-colour: rgb(207, 207, 207);
-    --tertiary-colour: rgb(226, 226, 226);
-    --bg-colour: rgb(231, 242, 246);
+    --primary-colour: #1f68de;
+    --dull-primary-colour: #eaf2fe;
+    --secondary-colour: #061537;
+    --tertiary-colour: #f1f3f6;
+    
+    --bg-colour: #faf9fc;
+    --text-colour: #121212;
+    --secondary-text-colour: #505050;
 
     --row-height: 0.5rem;
     --total-rows: 290;
@@ -17,8 +22,11 @@ body {
     display: grid;
     grid-template-rows: auto 1fr auto;
 
-    /* General primary font colour */
-    color: var(--primary-font-colour);
+    /* General font colour */
+    color: var(--text-colour);
+
+    /* General font */
+    font-family: 'Rethink Sans';
 }
 
 h1, h2, h3, h4, h5, h6, p {
@@ -26,11 +34,12 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 a {
-    color: var(--primary-font-colour);
+    color: var(--secondary-colour);
+    text-decoration: none;
 }
 
 a:hover {
-    text-decoration: none;
+    color: var(--primary-colour);
 }
 
 i {
@@ -57,8 +66,15 @@ i {
 }
 
 header {    
+    border-bottom: 1px solid rgb(209, 209, 209);
+
+    /* CHECK */
+    /* box-shadow: 0 1px 5px rgb(209, 209, 209);
+    position: relative; */
+
+
     .wide-content-container {
-        background-color: var(--primary-colour);
+        background-color: var(--bg-colour);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -68,8 +84,21 @@ header {
     }
 
     .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
         font-size: 2rem;
         font-weight: 600;
+        color: var(--text-colour);
+
+        img {
+            width: 32px;
+        }
+
+        p {
+            margin: 0;
+        }
     }
     
     nav {
@@ -80,6 +109,86 @@ header {
             gap: 2.5rem;
         }
     }
+}
+
+/* Homepage */
+.homepage {
+    display: grid;
+}
+
+.top-section {
+    display: flex;
+}
+
+.section, .alternate-section {
+    padding: 2rem;
+    min-width: 100%;
+    gap: 2.5rem;
+
+    h2 {
+        text-align: center;
+    }
+}
+
+.alternate-section {
+    background-color: var(--tertiary-colour);
+}
+
+.explore-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    justify-content: center;
+    gap: 1rem;
+}
+
+.explore-card {
+    background-color: var(--bg-colour);
+    padding: 1rem;
+    border-radius: 16px;
+
+    i {
+        color: var(--primary-colour);
+        background-color: var(--dull-primary-colour);
+        
+        font-size: 1.25rem;
+
+        padding: 0.65rem;
+        border-radius: 8px;
+    }
+}
+
+.section-card {
+    background-color: var(--secondary-colour);
+    color: var(--bg-colour);
+
+    border-radius: 16px;
+    padding: 4rem;
+    margin: 0 auto;
+    max-width: 40rem;
+
+    p {
+        text-align: center;
+    }
+}
+
+.two-options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+        margin: 0;
+    }
+}
+
+/* Navigation buttons */
+.btn {
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+
+    background-color: var(--primary-colour);
+    color: var(--bg-colour);
 }
 
 /* Flash messages */
@@ -160,7 +269,7 @@ th, td {
 }
 
 th {
-    background-color: var(--secondary-colour);
+    background-color: var(--tertiary-colour);
     text-align: left;
 
 }
@@ -184,31 +293,33 @@ td {
         gap: 0.5rem;
     }
 
-    /* Quick navigation button design */
-    a {
-        text-decoration: none;
-        background-color: var(--tertiary-colour);
-        
-        padding: 0.75rem;
-        border-radius: 12px;
+}
 
-        div {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: auto 1fr;
-            align-items: center;
-
-
-            i {
-                padding: 0.5rem 0.625rem;
-                background-color: var(--secondary-colour);
-                border-radius: 100rem;
-                font-size: 2rem;
-            }
+/* Quick navigation button design */
+.big-btn {
+    display: block;
+    text-decoration: none;
+    background-color: var(--tertiary-colour);
     
-            p {
-                margin-bottom: 0;
-            }
+    padding: 0.75rem;
+    border-radius: 12px;
+
+    div {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+
+
+        i {
+            padding: 0.5rem 0.625rem;
+            background-color: var(--bg-colour);
+            border-radius: 100rem;
+            font-size: 2rem;
+        }
+
+        p {
+            margin-bottom: 0;
         }
     }
 }
@@ -257,9 +368,9 @@ td {
     grid-template-columns: [time] auto [Monday] 1fr [Tuesday] 1fr [Wednesday] 1fr [Thursday] 1fr [Friday] 1fr [Saturday] 1fr [Sunday] 1fr; 
     grid-template-rows: auto, auto, repeat(calc(var(--total-rows) - 2), var(--row-height));
 
-    background-color: var(--primary-colour);
+    background-color: var(--secondary-colour);
     column-gap: 1px;
-    border: 1px solid var(--primary-colour);
+    border: 1px solid var(--secondary-colour);
 
     font-size: 0.85rem;
 }
@@ -271,7 +382,7 @@ td {
 
 /* Not including the calendar slots which have dynamic styling for border */
 .date-grid, .all-day-grid, .time-label {
-    border-bottom: 1px solid var(--primary-colour);
+    border-bottom: 1px solid var(--secondary-colour);
 }
 
 /* First row - dates */
@@ -322,13 +433,11 @@ td {
 /* All-day events */
 .all-day-event {
     display: block;
-    background-color: red;
 }
 
 /* Calendar events */
 .calendar-event {
     display: block;
-    border-bottom: 1px solid black;
 
     min-height: 0;
 
@@ -338,6 +447,8 @@ td {
 
 .all-day-event, .calendar-event {
     padding: 0.25rem;
+    border-radius: 8px;
+    margin: 0 2px 1px 2px;
 
     p {
         margin-bottom: 0;
@@ -379,8 +490,19 @@ dialog {
     justify-content: space-between;
 }
 
+.category-tag {
+    display: inline-block;
+    padding: 0.0rem 0.35rem;
+    border-radius: 4px;
+}
+
+.event-date {
+    color: var(--secondary-text-colour);
+}
+
 .event-description {
     white-space: pre-wrap;
+    margin-top: 1rem;
 }
 
 /* Categories table */
@@ -417,8 +539,10 @@ dialog {
 
 /* Footer */
 footer {
+    border-top: 1px solid var(--secondary-colour);
+
     .wide-content-container {
-        background-color: rgb(195, 226, 236);
+        background-color: var(--bg-colour);
 
         padding-top: 1rem;
         padding-bottom: 1rem;

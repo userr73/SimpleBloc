@@ -27,9 +27,10 @@
             {% for day_num, events in all_day_events.items() %}
                 <div class="all-day-grid" style="grid-column: {{ day_num + 1 }};">
                     {% if events %}
+                        {% set styles_list = all_day_styles[day_num] %}
                         {% for event in events %}
                             <a href="#" class="all-day-event"
-                                style="background-color: lightblue;"
+                                style="background-color: {{ styles_list[loop.index0] }};"
                                 onclick="document.getElementById('event-dialog').showModal(); return false;" 
                                 hx-get="/event/{{ event.event_id }}" hx-target="#event-dialog-content">
                                 <p>{{ event.event_title }}</p>
@@ -53,7 +54,7 @@
             {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
                 {% for row_num in range(3, 291) %}
                     {% if row_num % 12 == 2 %}
-                        {% set colour = 'rgb(190, 190, 190)' %}
+                        {% set colour = 'var(--secondary-colour)' %}
                     {% else %}
                         {% set colour = 'transparent' %}
                     {% endif %}
@@ -65,22 +66,20 @@
 
             <!-- Events -->
             {% for event in normal_events %}
-                {% set style_dict = event_styles[loop.index0] %}
+                {% set style_dict = normal_styles[loop.index0] %}
 
                 <!-- Create simpler variable names for each of the values in the dictionary -->
                 {% set row_start = style_dict.row_start %}
                 {% set row_end = style_dict.row_end %}
-                {% set border_b_colour = style_dict.border_bottom_colour %}
 
                 {% set row_diff = row_end - row_start %}
 
                 <a href="#" class="calendar-event"
                     style="
-                    background-color: lightblue; 
+                    background-color: {{ style_dict.colour }}; 
                     grid-row: {{ row_start }} / {{ row_end }}; 
                     grid-column: {{ style_dict.col_name }}; 
-                    max-height: {{ 0.5 * row_diff }}rem;
-                    border-bottom: 1px solid {{ border_b_colour }};
+                    max-height: calc({{ 0.5 * row_diff }}rem - 1px);
                     "
                     onclick="document.getElementById('event-dialog').showModal(); return false;" 
                     hx-get="/event/{{ event.event_id }}" hx-target="#event-dialog-content">

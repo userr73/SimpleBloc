@@ -1,6 +1,22 @@
 from datetime import date, timedelta, time
+from random import choice
 
 from utils.db import get_db, query_all, query_one
+
+def random_colour():
+    """Retrieves a random colour"""
+    colours = [
+        "#FF8989",
+        "#FFBB3C",
+        "#FFED95",
+        "#8ECE8E",
+        "#7ABCFE",
+        "#CD96FD",
+        "#FFC0D6",
+        "#B79090",
+    ]
+
+    return choice(colours)
 
 def date_forward_one_week(date_input):
     """Returns the date a week in the future"""
@@ -54,33 +70,53 @@ def get_todays_events(user_id):
 
     return events
 
-def get_overlapping_events(user_id, input_date, start_time, end_time):
+def get_overlapping_events(user_id, event_id, input_date, start_time, end_time):
     """Retrieves the user's overlapping events on a given day, filtered with the start and end time to determine any overlapping events."""
-    sql = '''
-        SELECT start_time, end_time, event_title
-        FROM Events
-        WHERE event_date = ? 
-        AND user_id = ?
-        AND is_all_day_event = ?
-    '''
-
-    data = (
-        input_date, 
-        user_id,
-        0
-    )
+    # Check whether to exclude the current event from query
+    if event_id:
+        sql = '''
+            SELECT start_time, end_time, event_title
+            FROM Events
+            WHERE event_date = ? 
+            AND user_id = ?
+            AND is_all_day_event = ?
+            AND event_id != ?
+        '''
+        data = (
+            input_date, 
+            user_id,
+            0,
+            event_id
+        )
+    else:
+        sql = '''
+            SELECT start_time, end_time, event_title
+            FROM Events
+            WHERE event_date = ? 
+            AND user_id = ?
+            AND is_all_day_event = ?
+        '''
+        data = (
+            input_date, 
+            user_id,
+            0
+        )
     
     events = query_all(sql, data)
+
+    # Create empty list for name of overlapping events
     overlaps = []
 
     for event in events:
-        event = dict(event)
         existing_start_time = start_time
         existing_end_time = end_time
 
-        if existing_start_time < start_time and existing_end_time > start_time:
+        event_start = time.fromisoformat(event['start_time'])
+        event_end = time.fromisoformat(event['end_time'])
+
+        if existing_start_time < event_start and existing_end_time > event_start:
             overlaps.append(event['event_title'])
-        elif existing_start_time >= start_time and existing_start_time < end_time:
+        elif existing_start_time >= event_start and existing_start_time < event_end:
             overlaps.append(event['event_title'])
     
     return overlaps
@@ -147,7 +183,7 @@ def get_event_details(event_id, user_id):
 def get_category_details(category_id, user_id):
     """Retrieves the dictionary of category details for a specific category and user"""
     sql = '''
-        SELECT category_name, category_id
+        SELECT category_name, category_id, category_colour
         FROM Categories
         WHERE category_id = ? AND user_id = ?
     '''
@@ -207,8 +243,24 @@ def date_to_day_name(event_date):
     return day_name
 
 
-def get_event_styling(events):
-    """Returns a list of dictionaries containing the column name and row start and end values"""
+def get_all_day_event_styling(events_dict):
+    """Returns a dictionary of lists of colours for the all day events"""
+    event_styles = {}
+
+    for day_num, events in events_dict.items():
+        if events:
+            # First create a new key value pair in the dictionary based on the day number
+            event_styles[day_num] = [events[0]['category_colour']]
+            
+            # Add the remaining events (if any) to the list
+            for event in events[1:]:
+                event_styles[day_num].append(event['category_colour'])
+
+    return event_styles
+
+
+def get_normal_event_styling(events):
+    """Returns a list of dictionaries containing the column name, row start and end values and the category colour"""
     events_style_ls = []
 
     for event in events:
@@ -219,20 +271,17 @@ def get_event_styling(events):
         row_start = time_to_row_num(event['start_time'])
         row_end = time_to_row_num(event['end_time'])
 
-        # Determine the border bottom colour
-        if row_end % 12 == 3:
-            border_bottom_colour = 'rgb(190, 190, 190)'
-        else:
-            border_bottom_colour = 'transparent'
+        # Get the category colour
+        colour = event['category_colour']
 
         # Add these column and row values to a dictionary
         event_dict = {
             'col_name': col_name, 
             'row_start': row_start, 
             'row_end': row_end,
-            'border_bottom_colour': border_bottom_colour
+            'colour': colour
         }
-
+        
         # Add the dictionary as a list item
         events_style_ls.append(event_dict)
     
