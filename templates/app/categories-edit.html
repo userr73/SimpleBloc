@@ -23,7 +23,7 @@
 
             <div class="form-group">
                 <label for="category_colour">Category Colour</label>
-                <input type="color" name="category_colour" id="category_colour" value="{{ data.get('category_colour') }}">
+                <input type="color" class="colour-picker" name="category_colour" id="category_colour" value="{{ data.get('category_colour') }}">
                 <div class="form-group-error">{{ errors.get('category_colour', '') }}</div>
             </div>
 

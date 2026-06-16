@@ -10,3 +10,19 @@
         <a href="{{ url_for('confirm_logout') }}">Logout</a>
     </nav>
 {% endblock %}
+
+{% block footer %}
+    <div class="wide-content-container">
+        <div class="footer-section">
+            <p>EVENTS</p>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('timetable') }}">Weekly timetable</a>
+            <a href="{{ url_for('new_event_form') }}">Add event</a>
+        </div>
+        <div class="footer-section">
+            <p>ACCOUNT</p>
+            <a href="{{ url_for('view_profile') }}">Profile</a>
+            <a href="{{ url_for('view_categories') }}">Categories</a>
+        </div>
+    </div>
+{% endblock %}

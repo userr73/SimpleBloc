@@ -5,8 +5,9 @@
 
 form {
     background-color: var(--tertiary-colour);
-    padding: 1rem 1.25rem;
+    padding: 1.75rem 2rem;
     border-radius: 0.75rem;
+    margin-bottom: 0.5rem;
 
     .title {
         margin-top: 1rem;
@@ -20,7 +21,7 @@ form {
         display: grid;
         gap: 0.2rem;
 
-        margin: 0.5rem 0 1.25rem 0;
+        margin: 0.5rem 0 1.5rem 0;
     }
 
     .two-equal-cols {
@@ -45,8 +46,8 @@ form {
 
     /* Individual form elements */
     input, textarea, select {
-        padding: 0.25rem;
-        border: 1px var(--outline-colour) solid;
+        padding: 0.5rem;
+        border: 1px var(--light-grey) solid;
         border-radius: 4px;
     }
 
@@ -65,8 +66,10 @@ form {
     }
 
     button {
-        padding: 0.75rem 1.25rem;
         background-color: var(--primary-colour);
+        color: var(--bg-colour);
+
+        padding: 0.75rem 1.25rem;
         margin-top: 1rem;
         margin-bottom: 0.5rem;
         
@@ -75,7 +78,7 @@ form {
     }
 
     button:hover {
-        background-color: var(--hover-colour);
+        background-color: var(--hover-primary-colour);
     }
 
     small {
