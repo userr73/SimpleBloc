@@ -8,26 +8,23 @@
         <div class="dashboard">
             <div class="daily-table">
                 {% if events %}
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="short-col">Time</th>
-                                <th>Event</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for event in events %}
-                                <tr>
+                    <div class="daily-events">
+                        {% for event in events %}
+                            <div class="event-group" style="background-color: {{ event.category_colour }};">
+                                <div class="time">
                                     {% if event.is_all_day_event %}
-                                        <td>All day</td>
+                                        <p>All day</p>
                                     {% else %}
-                                        <td>{{ event.start_time }} – {{ event.end_time }}</td>
+                                        <p>{{ event.start_time }}</p> 
+                                        <p>–</p>
+                                        <p>{{ event.end_time }}</p>
                                     {% endif %}
-                                    <td>{{ event.event_title }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                </div>
+                                
+                                <div>{{ event.event_title }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
                     <p>Number of events today: {{ count }}</p>
                 {% else %}
                     <p>No events today – <a href="{{ url_for('new_event_form') }}">add some events</a></p>

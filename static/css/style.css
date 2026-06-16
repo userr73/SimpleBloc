@@ -3,13 +3,13 @@
 :root {
     --primary-colour: #146bed;
     --hover-primary-colour: #2f7fff;
-    --dull-primary-colour: #e0ecfc;
+    --dull-primary-colour: #e7f2ff;
     --secondary-colour: #061537;
     --tertiary-colour: #f1f3f6;
     
     --bg-colour: #f9fafc;
     --text-colour: #121212;
-    --secondary-text-colour: #7c7c7c;
+    --secondary-text-colour: #868686;
 
     --light-grey: #d7d7d7;
 
@@ -326,8 +326,9 @@ main {
 
 /* Daily timetable container */
 .daily-table {
-    background-color: var(--dull-primary-colour);
+    /* background-color: var(--dull-primary-colour); */
     padding: 1rem;
+    border: 1px solid var(--secondary-text-colour);
     border-radius: 12px;
     min-height: 30rem;
 
@@ -335,6 +336,46 @@ main {
         text-align: center;
         margin-top: 0.5rem;
         font-size: 0.9rem;
+    }
+}
+
+.daily-events {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.event-group {
+    background-color: var(--bg-colour);
+    min-height: 5rem;
+    min-width: 100%;
+
+    border-radius: 8px;
+    overflow: hidden;
+    
+    display: flex;
+    
+    div {
+        align-content: center;
+        flex-grow: 1;
+        padding: 1rem 0.5rem;
+        
+        overflow: hidden;
+        overflow-wrap: break-word;
+    }
+    
+    .time {
+        font-size: 1.25rem;
+        text-align: center;
+        min-width: 5rem;
+        max-width: 5rem;
+
+        border-right: 1px solid var(--text-colour);
+
+        p {
+            font-size: 1.25rem;
+            margin: 0;
+            line-height: 1.2;
+        }
     }
 }
 
@@ -365,6 +406,9 @@ th {
 
 td {
     background-color: var(--bg-colour);
+    height: 5rem;
+    overflow: hidden;
+    overflow: break-word;
 }
 
 /* Quick navigation and quick note next to table */

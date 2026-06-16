@@ -36,10 +36,11 @@ def get_todays_events(user_id):
     """Retrieve the user's events for the day."""
     # Get the all day events first
     sql = '''
-        SELECT start_time, end_time, is_all_day_event, event_title
+        SELECT start_time, end_time, is_all_day_event, event_title, category_colour
         FROM Events
+        JOIN Categories on Categories.category_id = Events.category_id
         WHERE event_date = ? 
-        AND user_id = ?
+        AND Events.user_id = ?
         AND is_all_day_event = ?
     '''
 
@@ -53,11 +54,13 @@ def get_todays_events(user_id):
 
     # Get the remaining events
     sql = '''
-        SELECT start_time, end_time, is_all_day_event, event_title
+        SELECT start_time, end_time, is_all_day_event, event_title, category_colour
         FROM Events
+        JOIN Categories on Categories.category_id = Events.category_id
         WHERE event_date = ? 
-        AND user_id = ?
+        AND Events.user_id = ?
         AND is_all_day_event = ?
+        ORDER BY start_time ASC
     '''
 
     data = (
