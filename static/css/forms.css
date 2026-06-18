@@ -3,9 +3,17 @@
     --hover-colour: #a9a9a9;
 }
 
-form {
+.form-with-bg {
     background-color: var(--tertiary-colour);
     padding: 1.75rem 2rem;
+
+    button {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+form {
     border-radius: 0.75rem;
     margin-bottom: 0.5rem;
 
@@ -70,8 +78,6 @@ form {
         color: var(--bg-colour);
 
         padding: 0.75rem 1.25rem;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
         
         border: none;
         border-radius: 4px;

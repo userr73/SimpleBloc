@@ -6,7 +6,7 @@
     <div class="narrow-content-container">
         <h1>Quick Note</h1>
 
-        <form action="{{ url_for('update_quick_note') }}" method="post">
+        <form action="{{ url_for('update_quick_note') }}" method="post" class="form-with-bg">
             <div class="form-group">
                 <label for="quick_note">Edit quick note</label>
                 <textarea name="quick_note" id="quick_note">{{ quick_note }}</textarea> 

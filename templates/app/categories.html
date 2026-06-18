@@ -9,16 +9,23 @@
         {% if categories %}
             <p>View your categories below</p>
             <table class="categories-table">
+                <colgroup>
+                    <col>
+                    <col class="short-col">
+                </colgroup>
                 <thead>
                     <tr>
                         <th>Category Name</th>
-                        <th class="short-col">Options</th>
+                        <th>Options</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for category in categories %}
                     <tr>
-                        <td>{{ category.category_name }}</td>
+                        <td class="category-info">
+                            <p>{{ category.category_name }}</p>
+                            <div class="category-colour" style="background-color: {{ category.category_colour }};"></div>
+                        </td>
                         <td>
                             <div class="edit-delete-options">
                                 <a href="{{ url_for('edit_category', category_id=category.category_id) }}"><i class="fa-regular fa-pen-to-square" title="Rename category"></i></a>

@@ -273,12 +273,15 @@ main {
 .two-options {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 1rem;
 
     p {
         margin: 0;
     }
+}
+
+.centre-flex {
+    justify-content: center;
 }
 
 /* Navigation buttons */
@@ -345,10 +348,11 @@ main {
 }
 
 .event-group {
-    background-color: var(--bg-colour);
+    background-color: var(--tertiary-colour);
     min-height: 5rem;
     min-width: 100%;
 
+    /* border: 1px solid var(--light-grey); */
     border-radius: 8px;
     overflow: hidden;
     
@@ -369,8 +373,6 @@ main {
         min-width: 5rem;
         max-width: 5rem;
 
-        border-right: 1px solid var(--text-colour);
-
         p {
             font-size: 1.25rem;
             margin: 0;
@@ -382,33 +384,54 @@ main {
 /* Table design */
 table {
     width: 100%;
+    margin-bottom: 2rem;
 }
 
 table, th, td {
-    border: 3px solid var(--dull-primary-colour);
-    border-collapse: collapse;
-    border-radius: 10px;
-    
-    .short-col {
-        width: 14ch;
-    }
+    border-radius: 4px;
+    border-spacing: 0.35rem;
 }
 
 th, td {
-    padding: 0.25rem 0.5rem;
+    padding: 0.35rem 0.5rem;
 }
 
 th {
-    background-color: var(--bg-colour);
+    background-color: var(--dull-primary-colour);
     text-align: left;
-
 }
 
 td {
-    background-color: var(--bg-colour);
-    height: 5rem;
     overflow: hidden;
-    overflow: break-word;
+    overflow-wrap: break-word;
+    
+    background-color: var(--tertiary-colour);
+    
+    p {
+        margin: 0;
+        word-break: break-all;
+    }
+}
+
+.short-col {
+    min-width: 5rem;
+    max-width: 5rem;
+}
+
+.category-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    /* justify-content: space-between; */
+}
+
+/* Rectangle for the category colour */
+.category-colour {
+    min-width: 2rem;
+    max-width: 2rem;
+    height: 1rem;
+    
+    border: 0.2rem solid var(--bg-colour);
 }
 
 /* Quick navigation and quick note next to table */

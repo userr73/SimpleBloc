@@ -12,7 +12,7 @@
         <h1>Change Your Email</h1>
         <p>Enter the new email address you want to use for login below</p>
 
-        <form action="{{ url_for('submit_email_change') }}" method="post">
+        <form action="{{ url_for('submit_email_change') }}" method="post" class="form-with-bg">
             <div class="form-group">
                 <label for="user_email">New email</label>
                 <input type="email" name="user_email" id="user_email" value="{{ user_email }}">

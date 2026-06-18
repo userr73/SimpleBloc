@@ -14,7 +14,7 @@
 {% block main %}
     <div class="narrow-content-container">
         <h1>Edit Category Name</h1>
-        <form action="{{ url_for('update_category') }}" method="post">
+        <form action="{{ url_for('update_category') }}" method="post" class="form-with-bg">
             <div class="form-group">
                 <label for="category_name">Category Name</label>
                 <input type="text" name="category_name" id="category_name" value="{{ data.get('category_name') }}">

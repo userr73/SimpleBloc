@@ -19,7 +19,7 @@
         {# Flash an error message for invalid form #}
         {% include "partials/flash-message.html" %}
 
-        <form action="{{ url_for('process_register_form') }}" method="post">
+        <form action="{{ url_for('process_register_form') }}" method="post" class="form-with-bg">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email" value="{{ data.get('email', '') }}">

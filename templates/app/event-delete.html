@@ -5,13 +5,22 @@
 {% block main %}
     <div class="narrow-content-container">
         <h1>Confirm Delete</h1>
-        <p>You are about to delete <b>{{ event.event_title }}</b> on {{ event.event_date }} ({{ event.start_time }} – {{ event.end_time }}). This action cannot be undone.</p>
+
+        {% if event.is_all_day_event %}
+            {% set event_time = 'all day' %}
+        {% else %}
+            {% set event_time = event.start_time ~ '-' ~ event.end_time %}
+        {% endif %}
+
+        <p>You are about to delete <b>{{ event.event_title }}</b> on {{ event.event_date }} ({{ event_time }}). This action cannot be undone.</p>
 
         <form action="{{ url_for('delete_event') }}" method="post">
             <input type="hidden" name="event_id" value="{{ event.get('event_id') }}">
-            <button>Delete</button>
+            <div class="two-options">
+                <button>Delete</button>
+                <a href="{{ url_for('timetable') }}">Cancel</a>
+            </div>
         </form>
 
-        <a href="{{ url_for('timetable') }}">Cancel</a>
     </div>
 {% endblock %}
