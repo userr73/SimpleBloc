@@ -11,7 +11,8 @@
                     <div class="daily-events">
                         {% for event in events %}
                             <div class="event-group">
-                                <div class="time" style="background-color: {{ event.category_colour }};">
+                                {% set category_colour = event.category_colour %}
+                                <div class="time" style="background-color: {{ category_colour }}; color: var({{ category_colour | get_text_colour }});">
                                     {% if event.is_all_day_event %}
                                         <p>All day</p>
                                     {% else %}

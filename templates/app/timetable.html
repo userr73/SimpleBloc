@@ -29,8 +29,12 @@
                     {% if events %}
                         {% set styles_list = all_day_styles[day_num] %}
                         {% for event in events %}
+                            {% set category_colour = styles_list[loop.index0] %}
                             <a href="#" class="all-day-event"
-                                style="background-color: {{ styles_list[loop.index0] }};"
+                                style="
+                                    background-color: {{ category_colour }};
+                                    color: var({{ category_colour | get_text_colour }});
+                                "
                                 onclick="document.getElementById('event-dialog').showModal(); return false;" 
                                 hx-get="/event/{{ event.event_id }}" hx-target="#event-dialog-content">
                                 <p>{{ event.event_title }}</p>
@@ -73,10 +77,12 @@
                 {% set row_end = style_dict.row_end %}
 
                 {% set row_diff = row_end - row_start %}
+                {% set category_colour = style_dict.colour %}
 
                 <a href="#" class="calendar-event"
                     style="
-                    background-color: {{ style_dict.colour }}; 
+                    background-color: {{ category_colour }}; 
+                    color: var({{ category_colour | get_text_colour }});
                     grid-row: {{ row_start }} / {{ row_end }}; 
                     grid-column: {{ style_dict.col_name }}; 
                     max-height: calc({{ 0.5 * row_diff }}rem - 1px);

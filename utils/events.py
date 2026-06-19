@@ -3,6 +3,27 @@ from random import choice
 
 from utils.db import get_db, query_all, query_one
 
+def get_text_colour(bg_colour):
+    """Determines whether a light text is needed based on the background colour. Returns the relevant CSS colour variable name string."""
+
+    # Remove the # from hex string
+    colour_hex = bg_colour.lstrip("#")
+
+    # Separate the R, G and B from hex and convert to integers
+    r = int(colour_hex[0:2], 16)
+    g = int(colour_hex[2:4], 16)
+    b = int(colour_hex[4:6], 16)
+
+
+    # Use the perceived luminance formula to find luminance
+    luminance = (r * 0.299) + (g * 0.587) + (b * 0.114)
+
+    print('LUM', luminance)
+    if luminance <= 186:
+        return '--bg-colour'
+    else:
+        return '--text-colour'
+
 def random_colour():
     """Retrieves a random colour"""
     colours = [
@@ -293,6 +314,7 @@ def get_normal_event_styling(events):
 
 def get_this_weeks_events(user_id, start, end):
     """Retrieves one week of events based on the given start and end date"""
+    print("YESESS")
     week_events = {}
 
     # Get the normal events
@@ -338,10 +360,9 @@ def get_this_weeks_events(user_id, start, end):
 
     all_day_events = query_all(sql, data)
 
+    # Sort the all day events into each day of the week
     if all_day_events:
         sorted_ad_events = {}
-        # Get the number of all day events
-        num_events = len(all_day_events)
 
         # Set current date to the start date provided
         current_date = start
@@ -349,6 +370,16 @@ def get_this_weeks_events(user_id, start, end):
         # Set the initial day number to 1
         day_num = 1
 
+        # Get the first event
+        event_1 = all_day_events[0]
+
+        # Set the first date
+        event_1_date_obj = date.fromisoformat(event_1['event_date'])
+        if event_1_date_obj == current_date:
+            sorted_ad_events[day_num] = [event_1]
+            # Remove this event from the list
+            all_day_events.pop(0)
+        
         for event in all_day_events:
             # Get the event date date object
             event_date_obj = date.fromisoformat(event['event_date'])
@@ -356,7 +387,7 @@ def get_this_weeks_events(user_id, start, end):
             if event_date_obj == current_date:
                 sorted_ad_events[day_num].append(event)
             else:
-                # Check if the day number is a key in the dictionary
+                # Check if the current day number is a key in the dictionary
                 if day_num not in sorted_ad_events:
                     sorted_ad_events[day_num] = None
                 
@@ -375,7 +406,7 @@ def get_this_weeks_events(user_id, start, end):
                 # Add the new key value pair 
                 sorted_ad_events[day_num] = [event]
         
-        # Set value as None for remaining day numbers if there are no all day events
+        # Set value as None for remaining day numbers (since there are no more all day events)
         while day_num < 7:
             day_num += 1
             sorted_ad_events[day_num] = None

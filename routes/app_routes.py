@@ -3,9 +3,12 @@ from werkzeug.security import generate_password_hash
 
 from application import app
 from utils.validators import validate_event, validate_date, validate_category_form, validate_email, validate_password_change_form
-from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_weeks_events, get_normal_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name, get_todays_events, date_forward_one_week, date_back_one_week, get_all_day_event_styling, random_colour
+from utils.events import select_week_dates, check_if_add_new_category, get_all_categories, get_all_user_custom_categories, get_category_id, get_this_weeks_events, get_normal_event_styling, get_this_weeks_days, get_category_details, get_event_details, is_default_category, date_to_local_format, date_to_day_name, get_todays_events, date_forward_one_week, date_back_one_week, get_all_day_event_styling, random_colour, get_text_colour
 from utils.db import get_db
 from utils.user_profile import get_user_profile, get_default_category_id, get_quick_note
+
+# Register function
+app.jinja_env.filters['get_text_colour'] = get_text_colour
 
 def check_login():
     """Checks if a user id is set in the session"""
@@ -293,8 +296,6 @@ def add_or_edit_event():
             form_data['event_description'],
             category_id
         )
-
-        cursor.execute(sql, data)
     
     else:
         # Save changes to the database
@@ -321,7 +322,7 @@ def add_or_edit_event():
             event_id
         )
 
-        cursor.execute(sql, data)
+    cursor.execute(sql, data)
 
     # Commit changes and close the database connection
     conn.commit()
@@ -382,7 +383,7 @@ def delete_event():
     conn.commit()
     conn.close()
 
-    return render_template('app/dashboard.html')
+    return redirect(url_for('timetable'))
 
 
 @app.get('/categories')
@@ -392,8 +393,15 @@ def view_categories():
     # Get a list of all the category names except the default
     categories = get_all_user_custom_categories(session.get('user_id'))
     
-    return render_template('app/categories.html', categories=categories)
+    return render_template('app/categories.html', 
+                           categories=categories)
 
+@app.get('/add-category')
+def add_category():
+    check_login()
+    
+    return render_template('app/categories-form.html',
+                           mode='add')
 
 @app.get('/edit-category/<int:category_id>')
 def edit_category(category_id):
@@ -408,11 +416,18 @@ def edit_category(category_id):
     if is_default_category(category_id, 'No category'):
         abort(404)
 
-    return render_template('app/categories-edit.html', data=category)
+    return render_template('app/categories-form.html', 
+                           data=category,
+                           mode='edit')
 
 @app.post('/update-category')
-def update_category():
+def add_or_edit_category():
     check_login()
+
+    # Check the existence and validity of mode
+    mode = request.form.get('mode')
+    if mode not in ['add', 'edit']:
+        abort(400)
 
     form_data = {
         'category_name': request.form.get('category_name', '').strip(),
@@ -425,38 +440,59 @@ def update_category():
 
     if errors:
         # Re-render the form with error messages
-        return render_template('app/categories-edit.html', errors=errors, data=form_data)
-
-    # Check that the category id was provided in the form
-    try:
-        category_id = int(form_data['category_id'])
-    except (ValueError, TypeError):
-        abort(400)
+        return render_template('app/categories-form.html', 
+                               errors=errors, 
+                               data=form_data,
+                               mode=mode)
+    
 
     # Get the user id
     user_id = session.get('user_id')
 
-    # Check that the category belongs to the user
-    category = get_category_details(category_id, user_id)
-    if not category:
-        abort(404)
-    
     # Prepare database connection
     conn = get_db()
     cursor = conn.cursor()
 
-    sql = '''
-        UPDATE Categories
-        SET category_name = ?,
-            category_colour = ?
-        WHERE category_id = ?
-    '''
+    if mode == 'add':
+        # Insert the category data into the database
+        sql = '''
+            INSERT INTO Categories
+                (user_id,
+                category_name,
+                category_colour)
+            VALUES (?, ?, ?)
+        '''
+        data = (
+            user_id,
+            form_data['category_name'],
+            form_data['category_colour']
+        )
 
-    data = (
-        form_data['category_name'],
-        form_data['category_colour'],
-        category_id
-    )
+    else:
+        # Check that the category id was provided in the form
+        try:
+            category_id = int(form_data['category_id'])
+        except (ValueError, TypeError):
+            abort(400)
+        
+        # Check that the category belongs to the user
+        category = get_category_details(category_id, user_id)
+        if not category:
+            abort(404)
+        
+        # Save changes to database
+        sql = '''
+            UPDATE Categories
+            SET category_name = ?,
+                category_colour = ?
+            WHERE category_id = ?
+        '''
+
+        data = (
+            form_data['category_name'],
+            form_data['category_colour'],
+            category_id
+        )
 
     cursor.execute(sql, data)
 

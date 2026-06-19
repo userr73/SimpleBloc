@@ -1,0 +1,44 @@
+{# Create an empty errors string if one does not exist #}
+{% if errors is not defined %}
+    {% set errors = {} %}
+{% endif %}
+
+{% if data is not defined %}
+    {% set data = {} %}
+{% endif %}
+
+{% extends "base/app_base.html" %}
+
+{% block title %}Your Categories{% endblock %}
+
+{% block main %}
+    <div class="narrow-content-container">
+        {% if mode == 'add' %}
+            <h1>Add a New Category</h1>
+        {% else %}
+            <h1>Edit Category</h1>
+        {% endif %}
+        <form action="{{ url_for('add_or_edit_category') }}" method="post" class="form-with-bg">
+            <div class="form-group">
+                <label for="category_name">Category Name</label>
+                <input type="text" name="category_name" id="category_name" value="{{ data.get('category_name', '') }}">
+                <div class="form-group-error">{{ errors.get('category_name', '') }}</div>
+            </div>
+
+            <div class="form-group">
+                <label for="category_colour">Category Colour</label>
+                <input type="color" class="colour-picker" name="category_colour" id="category_colour" value="{{ data.get('category_colour', '') }}">
+                <div class="form-group-error">{{ errors.get('category_colour', '') }}</div>
+            </div>
+
+            <input type="hidden" name="mode" value="{{ mode }}">
+
+            {% if mode == 'add' %}
+                <button type="submit">Add category</button>
+            {% else %}
+                <input type="hidden" name="category_id" value="{{ data.get('category_id') }}">
+                <button type="submit">Save changes</button>
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}
