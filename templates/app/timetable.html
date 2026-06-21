@@ -4,14 +4,18 @@
 
 {% block main %}
     <div class="wide-content-container">
+        {# Show successful adding/editing/deleting of event message #}
+        {% include "partials/flash-message.html" %}
+        
         <h1>Timetable</h1>
         <p>View and edit your timetable below</p>
-        <form action="{{ url_for('timetable') }}" method="get" id="date_selector_form">
+
+        <form action="{{ url_for('timetable') }}" method="get" id="date_selector_form" class="date-selector">
             <button name="action" value="back"><i class="fa-solid fa-angle-left"></i></button>
             <input class="date-selector" type="date" id='date_selected' name='date_selected' value="{{ date_selected }}" onkeydown="return false" onclick="this.showPicker()">
             <button name="action" value="next"><i class="fa-solid fa-angle-right"></i></button>
         </form>
-     
+
         <div class="weekly-timetable-container">
             <!-- Date row -->
             <div class="date-grid left-col" style="grid-column: {{ time }};">AEST</div>
@@ -37,7 +41,7 @@
                                 "
                                 onclick="document.getElementById('event-dialog').showModal(); return false;" 
                                 hx-get="/event/{{ event.event_id }}" hx-target="#event-dialog-content">
-                                <p>{{ event.event_title }}</p>
+                                <p class="bold-normal">{{ event.event_title }}</p>
                             </a>
 
                             <dialog id="event-dialog">
@@ -58,7 +62,7 @@
             {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
                 {% for row_num in range(3, 291) %}
                     {% if row_num % 12 == 2 %}
-                        {% set colour = 'var(--secondary-colour)' %}
+                        {% set colour = 'var(--light-grey)' %}
                     {% else %}
                         {% set colour = 'transparent' %}
                     {% endif %}
@@ -89,8 +93,14 @@
                     "
                     onclick="document.getElementById('event-dialog').showModal(); return false;" 
                     hx-get="/event/{{ event.event_id }}" hx-target="#event-dialog-content">
-                    <p>{{ event.event_title }}</p>
-                    <p>{{ event.start_time }} – {{ event.end_time }}</p>
+                    {% if row_diff > 4 %}
+                        <div>
+                            <p class="bold-normal">{{ event.event_title }}</p>
+                            <p>{{ event.start_time }} – {{ event.end_time }}</p>
+                        </div>
+                    {% else %}
+                        <p class="short-event" style="word-break: break-all;"><b style="color: var({{ category_colour | get_text_colour }});" class="bold-normal">{{ event.event_title }}</b>; {{ event.start_time }}-{{ event.end_time }}</p>
+                    {% endif %}
                 </a>
 
                 <dialog id="event-dialog">

@@ -4,6 +4,9 @@
 
 {% block main %}
     <div class="wide-content-container dashboard-container">
+        {# Show successful login or update of quick note message #}
+        {% include "partials/flash-message.html" %}
+        
         <h1>Today's Events</h1>
         <div class="dashboard">
             <div class="daily-table">
@@ -52,7 +55,11 @@
                         <p class="title">Quick Note</p>
                         <a href="{{ url_for('quick_note_form') }}"><i class="fa-regular fa-pen-to-square"></i></a>
                     </div>
-                    <p class="quick-note">{{ quick_note }}</p>
+                    {% if quick_note %}
+                        <p class="quick-note">{{ quick_note }}</p>
+                    {% else %}
+                        <p>Your <a href="{{ url_for('quick_note_form') }}">quick note</a> is empty</p>
+                    {% endif %}
                 </div>
             </div>
         </div>

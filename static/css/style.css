@@ -40,15 +40,6 @@ h1 {
     font-weight: 600;
 }
 
-a {
-    color: var(--text-colour);
-    text-decoration: none;
-}
-
-a:hover {
-    color: var(--primary-colour);
-}
-
 i {
     font-size: 1.1rem;
 }
@@ -89,6 +80,17 @@ b {
     }
 }
 
+header, footer {
+    a {
+    color: var(--text-colour);
+    text-decoration: none;
+    }
+
+    a:hover {
+        color: var(--primary-colour);
+    }
+}
+
 header {    
     border-bottom: 1px solid var(--light-grey);
 
@@ -122,22 +124,19 @@ header {
 
 /* Flash messages */
 .message {
-    /* CHANGE/DELETE */
-    border: 1px solid grey;
-    background-color: lightgrey;
+    border: 1px solid rgb(139, 139, 139);
+    background-color: rgb(229, 229, 229);
     padding: 1rem;
     margin: 1rem 0;
     
     &.error-message {
-        /* CHANGE/DELETE */
-        border-color: crimson;
-        background-color: lightpink;
+        border-color: rgb(229, 37, 37);
+        background-color: rgb(255, 183, 186);
     }
     
     &.info-message {
-        /* CHANGE/DELETE */
-        border-color: forestgreen;
-        background-color: lightgreen;
+        border-color: rgb(72, 136, 72);
+        background-color: rgb(180, 227, 180);
     }
 }
 
@@ -146,11 +145,11 @@ main {
 
     a {
         text-decoration: underline;
+        color: var(--text-colour);
     }
 
     a:hover {
         text-decoration: none;
-        color: var(--text-colour);
     }
 
     .light-link {
@@ -284,6 +283,10 @@ main {
     justify-content: center;
 }
 
+.bold-normal {
+    font-weight: 600;
+}
+
 /* Navigation buttons */
 .btn {
     display: inline-block;
@@ -329,7 +332,6 @@ main {
 
 /* Daily timetable container */
 .daily-table {
-    /* background-color: var(--dull-primary-colour); */
     padding: 1rem;
     border: 1px solid var(--secondary-text-colour);
     border-radius: 12px;
@@ -349,8 +351,8 @@ main {
 
 .event-group {
     background-color: var(--tertiary-colour);
-    min-height: 5rem;
     min-width: 100%;
+    min-height: 5rem;
 
     /* border: 1px solid var(--light-grey); */
     border-radius: 8px;
@@ -469,9 +471,6 @@ td {
 
         i {
             padding: 0.5rem 0.625rem;
-            /* background-color: var(--light-grey); */
-            /* border: 1px solid var(--text-colour); */
-            border-radius: 100rem;
             font-size: 2rem;
 
             color: var(--text-colour);
@@ -481,6 +480,10 @@ td {
             margin-bottom: 0;
         }
     }
+}
+
+.big-btn:hover {
+    background-color: var(--light-grey);
 }
 
 /* Quick note container */
@@ -504,9 +507,12 @@ td {
         }
         
         a {
-            background-color: var(--light-grey);
             padding: 0.29rem 0.4rem;
             border-radius: 8px;
+        }
+
+        a:hover {
+            background-color: var(--light-grey);
         }
 
         i {
@@ -521,15 +527,22 @@ td {
 }
 
 
+/* Date selector */
+.date-selector {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+
 /* Weekly timetable */
 .weekly-timetable-container {
     display: grid;
     grid-template-columns: [time] auto [Monday] 1fr [Tuesday] 1fr [Wednesday] 1fr [Thursday] 1fr [Friday] 1fr [Saturday] 1fr [Sunday] 1fr; 
     grid-template-rows: auto, auto, repeat(calc(var(--total-rows) - 2), var(--row-height));
 
-    background-color: var(--secondary-colour);
+    background-color: var(--light-grey);
     column-gap: 1px;
-    border: 1px solid var(--secondary-colour);
+    border: 1px solid var(--light-grey);
 
     font-size: 0.85rem;
 }
@@ -539,9 +552,8 @@ td {
     background-color: var(--bg-colour);
 }
 
-/* Not including the calendar slots which have dynamic styling for border */
 .date-grid, .all-day-grid, .time-label {
-    border-bottom: 1px solid var(--secondary-colour);
+    border-bottom: 1px solid var(--light-grey);
 }
 
 /* First row - dates */
@@ -591,23 +603,33 @@ td {
 
 /* All-day events */
 .all-day-event {
-    display: block;
+    padding: 0.25rem;
+    max-height: 3rem;
+    overflow: hidden;
 }
 
 /* Calendar events */
 .calendar-event {
-    display: block;
-
     min-height: 0;
 
     overflow: hidden; /* Ensures that a really long word does not force the container to stretch its width */
     overflow-wrap: break-word; /* Breaks the really long word if it goes beyond the container width */
+
+    div {
+        padding: 0.25rem;
+    }
+
+    .short-event {
+        padding: 0 0.15rem;
+    }
 }
 
 .all-day-event, .calendar-event {
-    padding: 0.25rem;
+    display: block;
     border-radius: 8px;
     margin: 0 2px 1px 2px;
+
+    text-decoration: none;
 
     p {
         margin-bottom: 0;
@@ -647,12 +669,19 @@ dialog {
 .modal-title {
     display: flex;
     justify-content: space-between;
+    max-width: 100%;
+    gap: 1rem;
+
+    h2 {
+        max-width: 90%;
+    }
 }
 
 .category-tag {
     display: inline-block;
     padding: 0.0rem 0.35rem;
     border-radius: 4px;
+    max-width: 100%;
 }
 
 .event-date {
@@ -695,9 +724,18 @@ dialog {
     }
 
     a {
-        border: 1px solid var(--primary-colour);
+        border: 1px solid var(--light-grey);
         border-radius: 4px;
         padding: 0.4rem 0.75rem;
+        text-decoration: none;
+    }
+
+    a:hover {
+        border-color: var(--text-colour);
+    }
+
+    b {
+        color: var(--text-colour);
     }
 }
 

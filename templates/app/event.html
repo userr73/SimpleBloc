@@ -11,6 +11,6 @@
     {% else %}
         <p class="event-date">{{ event.day_of_week }} {{ event.event_date }} | {{ event.start_time }} – {{ event.end_time }}</p>
     {% endif %}
-    <p class='category-tag' style="background-color: {{ event.category_colour }}">{{ event.category_name }}</p>
+    <p class='category-tag' style="background-color: {{ event.category_colour }}; color: var({{ event.category_colour | get_text_colour }});">{{ event.category_name }}</p>
     <p class="event-description">{{ event.event_description }}</p>
 </div>

@@ -4,6 +4,9 @@
 
 {% block main %}
     <div class="narrow-content-container">
+        {# Show message for adding/editing/deleting category #}
+        {% include "partials/flash-message.html" %}
+
         <h1>Event Categories</h1>
 
         {% if categories %}

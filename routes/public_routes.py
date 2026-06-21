@@ -27,7 +27,8 @@ def process_login_form():
 
     if errors:
         # Re-render the form with error messages
-        flash('Login failed. Please check the form and try again.', 'error-message')
+        message = f"Login failed. Please check the form and try again or register a new account."
+        flash(message, 'error-message')
         return render_template('public/login.html', 
                                data=form_data, 
                                errors=errors)
@@ -49,6 +50,7 @@ def process_login_form():
     if valid_login:
         # Set the session variable and redirect to the dashboard
         session['user_id'] = user['user_id']
+        flash('Login successful!', 'info-message')
         return redirect(url_for('dashboard'))
     else:
         # Generic error message for both cases of user not found and incorrect password

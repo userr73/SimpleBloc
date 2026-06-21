@@ -12,6 +12,9 @@
         <h1>Change Your Email</h1>
         <p>Enter the new email address you want to use for login below</p>
 
+        {# Shows the form error message #}
+        {% include "partials/flash-message.html" %}
+        
         <form action="{{ url_for('submit_email_change') }}" method="post" class="form-with-bg">
             <div class="form-group">
                 <label for="user_email">New email</label>

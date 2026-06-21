@@ -1,4 +1,4 @@
-from flask import render_template, request, session, abort, redirect, url_for
+from flask import render_template, request, session, abort, redirect, url_for, flash
 from werkzeug.security import generate_password_hash
 
 from application import app
@@ -83,6 +83,7 @@ def update_quick_note():
     conn.commit()
     conn.close()
 
+    flash('Updated quick note', 'info-message')
     return redirect(url_for('dashboard'))
 
 
@@ -234,6 +235,8 @@ def add_or_edit_event():
 
     if errors:
         # Re-render the template with error messages and form data
+        message = f'Event could not be { mode }ed. Check the form and try again.'
+        flash(message, 'error-message')
         return render_template('app/event-form.html', 
                                mode=mode,
                                errors=errors, 
@@ -328,7 +331,9 @@ def add_or_edit_event():
     conn.commit()
     conn.close()
 
-    return redirect(url_for('dashboard'))
+    message = f'Event successfully {mode}ed'
+    flash(message, 'info-message')
+    return redirect(url_for('timetable'))
 
 
 @app.get('/delete-event/<int:event_id>')
@@ -383,6 +388,7 @@ def delete_event():
     conn.commit()
     conn.close()
 
+    flash('Event successfully deleted', 'info-message')
     return redirect(url_for('timetable'))
 
 
@@ -439,6 +445,8 @@ def add_or_edit_category():
     errors = validate_category_form(form_data)
 
     if errors:
+        message = f'Category could not be {mode}ed. Check the form and try again.'
+        flash(message, 'error-message')
         # Re-render the form with error messages
         return render_template('app/categories-form.html', 
                                errors=errors, 
@@ -500,6 +508,8 @@ def add_or_edit_category():
     conn.commit()
     conn.close()
 
+    message = f'Category {mode}ed successfully'
+    flash(message, 'info-message')
     return redirect(url_for('view_categories'))
 
 
@@ -565,6 +575,7 @@ def delete_category():
     conn.commit()
     conn.close()
 
+    flash('Category successfully deleted', 'info-message')
     return redirect(url_for('view_categories'))
 
 
@@ -601,6 +612,7 @@ def submit_email_change():
     errors = validate_email(user_email)
     
     if errors:
+        flash('Email could not be updated. Check the form and try again.', 'error-message')
         # Re-render the template with error messages and form data
         return render_template('app/email.html',
                                errors=errors,
@@ -630,6 +642,7 @@ def submit_email_change():
     conn.commit()
     conn.close()
 
+    flash('Email updated successfully', 'info-message')
     return redirect(url_for('view_profile'))
 
 
@@ -658,6 +671,7 @@ def submit_password_change():
     errors = validate_password_change_form(form_data, user_id)
 
     if errors:
+        flash('Password could not be updated. Check the form and try again.', 'error-message')
         # Re-render the form with error messages
         return render_template('app/password.html',
                                data=form_data,
@@ -684,6 +698,7 @@ def submit_password_change():
     conn.commit()
     conn.close()
 
+    flash('Password successfully updated', 'info-message')
     return redirect(url_for('view_profile'))
 
 
