@@ -16,6 +16,7 @@ def check_login():
         abort(401)
 
 
+
 @app.get('/dashboard')
 def dashboard():
     check_login()
@@ -46,7 +47,6 @@ def quick_note_form():
 
     # Retrieve the user's quick note from the database
     quick_note = get_quick_note(session.get('user_id'))
-    print("USERS QUICK NOTE", quick_note)
 
     return render_template('app/quick-note.html',
                            quick_note=quick_note)
@@ -153,7 +153,7 @@ def view_event(event_id):
     event_day_of_week = date_to_day_name(event_date_str)
     event['day_of_week'] = event_day_of_week
 
-    # Convert event date to local formatting
+    # Convert event date to DD/MM/YYYY formatting
     event_date_formatted = date_to_local_format(event_date_str)
     event['event_date'] = event_date_formatted
 
@@ -193,7 +193,7 @@ def edit_event(event_id):
                            categories=categories)
 
 
-@app.post('/submit-new-event')
+@app.post('/submit-event')
 def add_or_edit_event():
     check_login()
 

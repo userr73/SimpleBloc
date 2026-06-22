@@ -23,6 +23,8 @@
         {% include "partials/flash-message.html" %}
 
         <form action="{{ url_for('add_or_edit_category') }}" method="post" class="form-with-bg">
+            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+
             <div class="form-group">
                 <label for="category_name">Category Name</label>
                 <input type="text" name="category_name" id="category_name" value="{{ data.get('category_name', '') }}">

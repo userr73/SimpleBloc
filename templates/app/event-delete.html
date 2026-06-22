@@ -15,6 +15,8 @@
         <p>You are about to delete <b>{{ event.event_title }}</b> on {{ event.event_date }} ({{ event_time }}). This action cannot be undone.</p>
 
         <form action="{{ url_for('delete_event') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+
             <input type="hidden" name="event_id" value="{{ event.get('event_id') }}">
             <div class="two-options">
                 <button>Delete</button>

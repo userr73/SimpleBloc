@@ -20,6 +20,8 @@
         {% include "partials/flash-message.html" %}
 
         <form action="{{ url_for('process_login_form') }}" method="post" class="form-with-bg">
+            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email" value="{{ data.get('email', '') }}">

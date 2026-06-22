@@ -16,7 +16,7 @@ CREATE TABLE Categories (
     category_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     category_name TEXT NOT NULL,
-    category_colour TEXT, -- TEMP: should be TEXT NOT NULL
+    category_colour TEXT NOT NULL,
     
     FOREIGN KEY (user_id) REFERENCES Users (user_id)
 );

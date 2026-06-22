@@ -18,7 +18,6 @@ def get_text_colour(bg_colour):
     # Use the perceived luminance formula to find luminance
     luminance = (r * 0.299) + (g * 0.587) + (b * 0.114)
 
-    print('LUM', luminance)
     if luminance <= 186:
         return '--bg-colour'
     else:
@@ -164,10 +163,10 @@ def get_all_user_custom_categories(user_id):
     
 
 def date_to_local_format(data):
-    """Converts an ISO 8601 format date string into a formatted local date"""
+    """Converts an ISO 8601 format date string into a DD/MM/YYYY format"""
     date_obj = date.fromisoformat(data)
 
-    return date_obj.strftime('%x')
+    return date_obj.strftime('%d/%m/%Y')
 
 
 def is_default_category(category_id, default_category_name):
@@ -314,7 +313,6 @@ def get_normal_event_styling(events):
 
 def get_this_weeks_events(user_id, start, end):
     """Retrieves one week of events based on the given start and end date"""
-    print("YESESS")
     week_events = {}
 
     # Get the normal events

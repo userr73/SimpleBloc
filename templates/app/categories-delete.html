@@ -8,6 +8,8 @@
         <p>You are about to delete the category <b>{{ data.category_name }}</b>. This action cannot be undone.</p>
 
         <form action="{{ url_for('delete_category') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+
             <input type="hidden" name="category_id" value="{{ data.category_id }}">
             <div class="two-options">
                 <button>Delete</button>

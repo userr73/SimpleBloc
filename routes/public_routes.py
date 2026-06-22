@@ -1,9 +1,27 @@
-from flask import render_template, redirect, url_for, request, flash, session
+from flask import render_template, redirect, url_for, request, flash, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
+import secrets
 
 from application import app
 from utils.validators import validate_registration, validate_login
 from utils.db import get_db, query_all, query_one
+
+
+@app.before_request
+def check_csrf():
+    # Generate a CSRF token for visitors
+    if not session.get('csrf_token'):
+        session['csrf_token'] = secrets.token_hex(16)
+
+    # Perform a CSRF check for POST requests
+    if request.method == "POST":
+        form_token = request.form.get('csrf_token')
+        session_token = session.get('csrf_token')
+
+        # Abort the request if the tokens do not match
+        if not form_token or form_token != session_token:
+            abort(403, "CSRF Error")
+
 
 @app.get('/')
 def home():
@@ -50,6 +68,10 @@ def process_login_form():
     if valid_login:
         # Set the session variable and redirect to the dashboard
         session['user_id'] = user['user_id']
+        
+        # Generate a new CSRF token for the logged-in user
+        session['csrf_token'] = secrets.token_hex(16)
+
         flash('Login successful!', 'info-message')
         return redirect(url_for('dashboard'))
     else:

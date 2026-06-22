@@ -16,6 +16,8 @@
         {% include "partials/flash-message.html" %}
         
         <form action="{{ url_for('submit_email_change') }}" method="post" class="form-with-bg">
+            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+
             <div class="form-group">
                 <label for="user_email">New email</label>
                 <input type="email" name="user_email" id="user_email" value="{{ user_email }}">

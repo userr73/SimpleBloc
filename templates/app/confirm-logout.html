@@ -6,6 +6,8 @@
     <div class="narrow-content-container">
         <h1>Are you sure you want to log out?</h1>
         <form action="{{ url_for('logout') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+
             <div class="two-options">
                 <button type="submit">Logout</button>
 
